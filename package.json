@@ -1,0 +1,20 @@
+{
+  "name": "strikex-storefront",
+  "private": true,
+  "version": "0.1.0",
+  "description": "StrikeX Storefront (Node.js + Express + EJS)",
+  "main": "app/bin/www",
+  "scripts": {
+    "start": "node app/bin/www"
+  },
+  "dependencies": {
+    "cookie-parser": "^1.4.6",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "express-session": "^1.18.1",
+    "express-mysql-session": "^3.0.3",
+    "morgan": "^1.10.0",
+    "mysql": "^2.18.1"
+  }
+}
