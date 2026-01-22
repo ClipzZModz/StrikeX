@@ -1,0 +1,147 @@
+    <!-- Cart Sidebar -->
+    <div id="cartSidebar" class="cart-sidebar">
+        <div class="cart-header">
+        <h4>Your Cart</h4>
+        <button id="closeCart" class="close-cart">&times;</button>
+        </div>
+        <div class="cart-items" id="cartItems">
+        <!-- JS will populate cart items here -->
+        </div>
+        <div class="cart-footer">
+        <strong>Total:</strong> <span id="cartTotal">&pound;0.00</span>
+        <a href="/cart" class="checkout-btn">Checkout</a>
+        </div>
+    </div>
+    
+
+    <script>
+        const cartButton = document.getElementById("cart-section");
+        const cartSidebar = document.getElementById('cartSidebar');
+        const closeCartBtn = document.getElementById('closeCart');
+        const cartItemsContainer = document.getElementById('cartItems');
+        const cartTotal = document.getElementById('cartTotal');
+        const buttonTotal = document.getElementById("cart-price");
+        const buttonQTY = document.getElementById("cart-count");
+      
+        let cart = [];
+      
+        const addItemToCart = (cartData) => {
+            if (!cartData || !cartData.lines || !Array.isArray(cartData.lines.edges)) {
+                console.error('Invalid cart data structure:', cartData);
+                return;
+            }
+
+            console.log('Updated cart data from server:', cartData);
+
+            cart = cartData.lines.edges.map(edge => {
+                const item = edge.node;
+
+                console.log('Cart item:', item);
+
+                const price = parseFloat(item.price);
+                const quantity = parseInt(item.quantity);
+
+                return {
+                name: item.title || 'Unnamed Product',
+                price: !isNaN(price) ? price : 0,
+                qty: !isNaN(quantity) ? quantity : 1,
+                img: item.image || 'assets/images/default.jpg'
+                };
+            });
+
+            renderCart();
+            toggleCart(true);
+            };
+
+                
+            const renderCart = async () => {
+
+                let currencyCode = 'GBP';
+
+                cartItemsContainer.innerHTML = '';
+                let total = 0;
+
+                for (const { name, price, img, qty } of cart) {
+                    let finalPrice = price;
+                    let finalQty = qty;
+
+                    if (typeof finalPrice !== 'number' || isNaN(finalPrice)) finalPrice = 0;
+                    if (typeof finalQty !== 'number' || isNaN(finalQty)) finalQty = 1;
+
+                    const item = document.createElement('div');
+                    item.className = 'cart-item';
+
+
+                    try {
+                    const response = await fetch(`/checkout/product/${encodeURIComponent(name)}`, {
+                        method: 'GET',
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+
+                    const result = await response.json();
+                    const priceAmount = parseFloat(JSON.parse(result.productData[0].uk_price_obj).price.amount);
+
+                    item.innerHTML = `
+                        <img src="${img}" alt="${name}" />
+                        <div class="cart-item-details">
+                        <strong>${name}</strong><br>
+                        &pound;${priceAmount.toFixed(2)} GBP x ${finalQty}
+                        </div>
+                    `;
+
+
+                    buttonQTY.innerHTML = result.totalCartItems;
+
+                    total += priceAmount * finalQty;
+                    cartItemsContainer.appendChild(item);
+
+                    } catch (error) {
+                    console.error('Fetch error:', error);
+                    }
+                }
+
+                cartTotal.textContent = `\u00a3${total.toFixed(2)}`;
+                buttonTotal.textContent = `\u00a3${total.toFixed(2)}`;
+                };
+
+      
+        const toggleCart = (show = false) => {
+          if (show) {
+            cartSidebar.classList.add('open');
+          } else {
+            cartSidebar.classList.remove('open');
+          }
+        };
+      
+        cartButton.addEventListener('click', () => toggleCart(true));
+        closeCartBtn.addEventListener('click', () => toggleCart(false));
+      
+        const addToCart = async (variantId, quantity = 1) => {
+          try {
+
+            const response = await fetch('/api/v1/cart/add', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ variantId, quantity })
+            });
+      
+            const result = await response.json();
+      
+            if (response.ok) {
+              console.log('Cart updated:', result);
+              addItemToCart(result.cart);
+            } else {
+              console.error('Failed to add item to cart:', result.error);
+              alert(`Error: ${result.error}`);
+            }
+          } catch (error) {
+            console.error('Error adding to cart:', error);
+            alert('An unexpected error occurred. Please try again later.');
+          }
+        };
+      </script>
+
+

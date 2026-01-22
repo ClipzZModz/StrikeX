@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StrikeX Customer Account</title>
+    <!-- Favicon img -->
+    <link rel="shortcut icon" href="/assets/images/favicon.png">
+    <!-- Bootstarp min css -->
+    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
+    <!-- All min css -->
+    <link rel="stylesheet" href="/assets/css/all.min.css">
+    <!-- Swiper bundle min css -->
+    <link rel="stylesheet" href="/assets/css/swiper-bundle.min.css">
+    <!-- Magnigic popup css -->
+    <link rel="stylesheet" href="/assets/css/magnific-popup.css">
+    <!-- Animate css -->
+    <link rel="stylesheet" href="/assets/css/animate.css">
+    <!-- Nice select css -->
+    <link rel="stylesheet" href="/assets/css/nice-select.css">
+    <!-- Style css -->
+    <link rel="stylesheet" href="/assets/css/style.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.min.js" integrity="sha512-ykZ1QQr0Jy/4ZkvKuqWn4iF3lqPZyij9iRv6sGqLRdTPkY69YX6+7wvVGmsdBbiIfN/8OdsI7HABjvEok6ZopQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
+    
+    <style>
+        /* Stripe Elements container styling */
+        #stripe-card {
+            background: #1c2526;
+            border-radius: 8px;
+            padding: 16px;
+            border: 1px solid #3a4647;
+        }
+
+        #card-element {
+            padding: 12px;
+            background: #1c2526;
+            border-radius: 6px;
+            border: 1px solid #6a7879;
+        }
+
+        .StripeElement {
+            color: #ffffff;
+        }
+
+        .StripeElement--focus {
+            border-color: #ff6200;
+        }
+
+        .StripeElement--invalid {
+            border-color: #ff4d4d;
+        }
+
+        /* Confirm Payment button */
+        .btn-one.mt-35 {
+            background: #ff6200;
+            color: #ffffff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            display: block;
+            margin: 20px auto 0;
+            width: 100%;
+        }
+
+        .btn-one.mt-35:hover {
+            background: #e65500;
+        }
+
+        /* Parent container */
+        .checkout__item-right {
+            background: #1c2526 !important;
+            color: #ffffff !important;
+        }
+    </style>
+    
+  
+    <style type="text/css">
+
+        .account-overview {
+            margin-top: 10%!important;
+        }
+    
+        .cart-items::-webkit-scrollbar {
+            width: 6px;
+        }
+        .cart-items::-webkit-scrollbar-thumb {
+            background-color: #333;
+            border-radius: 4px;
+        }
+        .cart-items::-webkit-scrollbar-track {
+            background-color: #222;
+        }
+    
+        .cart-sidebar {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 350px;
+            max-width: 100%;
+            height: 100vh;
+            background: #191919;
+            box-shadow: -2px 0 10px rgba(0, 0, 0, 0.6);
+            transition: right 0.3s ease;
+            z-index: 1050;
+            display: flex;
+            flex-direction: column;
+            padding: 1.5rem 1rem;
+            color: #fff;
+        }
+    
+        .cart-sidebar.open {
+            right: 0;
+        }
+    
+        .cart-header {
+            flex-shrink: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #333;
+            padding-bottom: 0.75rem;
+        }
+    
+        .cart-header h4 {
+            margin: 0;
+            font-size: 1.25rem;
+            color: #fff;
+        }
+    
+        .cart-items {
+            flex: 1 1 auto;
+            overflow-y: auto;
+            margin-top: 1rem;
+            max-height: calc(100vh - 200px); /* Adjust if needed */
+        }
+    
+        .cart-item {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 1.25rem;
+            align-items: center;
+        }
+    
+        .cart-item img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 6px;
+            border: 1px solid #333;
+        }
+    
+        .cart-item-details {
+            flex-grow: 1;
+            color: #ccc;
+            font-size: 0.9rem;
+        }
+    
+        .cart-footer {
+            flex-shrink: 0;
+            border-top: 1px solid #333;
+            padding-top: 1rem;
+            color: #fff;
+            font-size: 1rem;
+            background: #191919;
+        }
+    
+        .checkout-btn {
+            display: block;
+            margin-top: 10px;
+            background: #fa4f09;
+            color: #fff;
+            padding: 12px;
+            text-align: center;
+            border-radius: 8px;
+            width: 100%;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background 0.2s ease;
+        }
+    
+        .checkout-btn:hover {
+            background: #e04808;
+        }
+    
+        .close-cart {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #fff;
+            cursor: pointer;
+        }
+    
+    </style>
+    
+
+
+</head>
+
+<body style="background-color: #191919; color: #fff;">
+    <!-- Header area start here -->
+    <div class="top__header pt-30 pb-30" style="background-color: #191919;">
+        <div class="container">
+            <div class="top__wrapper">
+                <a href="index-2.html" class="">
+                    <img height="70px" src="/assets/images/logo/logo.png" alt="">
+                </a>
+                <div class="search__wrp" style="margin-left: 5%">
+                    <input placeholder="Search for" aria-label="Search">
+                    <button><i class="fa-solid fa-search"></i></button>
+                </div>
+                <div class="account__wrap">
+                    <div class="account d-flex align-items-center">
+                        <div class="user__icon">
+                            <a href="#0"><i class="fa-regular fa-user"></i></a>
+                        </div>
+                        <a href="/account" class="acc__cont"><span>My Account</span></a>
+                    </div>
+                    <div class="cart d-flex align-items-center">
+                        <span class="cart__icon">
+                            <i class="fa-regular fa-cart-shopping"></i>
+                        </span>
+                        <a id="cart-section" class="c__one"><span id="cartTotal">&pound;0.00</span></a>
+                        <span class="one" id="cart-count" style="background-color: #fa4f09;">0</span>
+                    </div>
+                      
+                </div>
+            </div>
+        </div>
+
+
+
+        
+    </div>
+    <!-- Header area end here -->
+
+    <header class="header-section">
+      <div class="container">
+          <div class="header-wrapper">
+              <div class="header-bar d-lg-none">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+              </div>
+              <ul class="main-menu">
+                  <li>
+                      <a href="#0">Home <i class="fa-regular fa-angle-down"></i></a>
+                      <ul class="sub-menu">
+                          <li class="subtwohober">
+                              <a href="index-2.html">
+                                  Home One
+                              </a>
+                          </li>
+                          <li class="subtwohober">
+                              <a href="index-light.html">
+                                  Home One Light
+                              </a>
+                          </li>
+                          <li class="subtwohober">
+                              <a href="index-3.html">
+                                  Home Two
+                              </a>
+                          </li>
+                          <li class="subtwohober">
+                              <a href="index-2-light.html">
+                                  Home Two Light
+                              </a>
+                          </li>
+                      </ul>
+                  </li>
+                  <li>
+                      <a href="about.html">About Us</a>
+                  </li>
+                  <li>
+                      <a href="#0">Pages <i class="fa-regular fa-angle-down"></i></a>
+                      <ul class="sub-menu">
+                          <li class="subtwohober">
+                              <a href="shop.html">
+                                  Shop Leftbar
+                              </a>
+                          </li>
+                          <li class="subtwohober">
+                              <a href="shop-2.html">
+                                  Shop Rightbar
+                              </a>
+                          </li>
+                          <li class="subtwohober">
+                              <a href="shop-single.html">
+                                  Shop Single
+                              </a>
+                          </li>
+                          <li class="subtwohober">
+                              <a href="cart.html">
+                                  Cart Page
+                              </a>
+                          </li>
+                          <li class="subtwohober">
+                              <a href="checkout.html">
+                                  Checkout Page
+                              </a>
+                          </li>
+                          <li class="subtwohober">
+                              <a href="register.html">
+                                  Register
+                              </a>
+                          </li>
+                          <li class="subtwohober">
+                              <a href="login.html">
+                                  Login
+                              </a>
+                          </li>
+                          <li class="subtwohober">
+                              <a href="error.html">
+                                  404 Error
+                              </a> 
+                          </li>
+                      </ul>
+                  </li>
+                  <li>
+                      <a href="#0">Blog <i class="fa-regular fa-angle-down"></i></a>
+                      <ul class="sub-menu">
+                          <li class="subtwohober">
+                              <a href="blog.html">
+                                  Blog Stander
+                              </a>
+                          </li>
+                          <li class="subtwohober">
+                              <a href="blog-grid.html">
+                                  Blog Grid
+                              </a>
+                          </li>
+                          <li class="subtwohober">
+                              <a href="blog-list.html">
+                                  Blog List
+                              </a>
+                          </li>
+                          <li class="subtwohober">
+                              <a href="blog-single.html">
+                                  Blog Single
+                              </a>
+                          </li>
+                      </ul>
+                  </li>
+                  <li>
+                      <a href="contact.html">Contact Us</a>
+                  </li>
+                  
+              </ul>
+              <div class="shipping__item d-none d-sm-flex align-items-center">
+                  <div class="menu__right d-flex align-items-center">
+                      <div class="thumb">
+                          <img src="/assets/images/flag/picking.png" alt="image">
+                      </div>
+
+                      
+                      <div class="content">
+                          <p>
+                              Picking up?
+                          </p>
+                          <div class="items">
+                              <select class="form__select p-0" style="color: white">
+                                  <option value="1">
+                                      Select Store
+                                  </option>
+                                  <option value="2">
+                                      Store One
+                                  </option>
+                                  <option value="3">
+                                      Store Two
+                                  </option>
+                                  <option value="3">
+                                      Store Three
+                                  </option>
+                              </select>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="menu__right d-flex align-items-center">
+                      <div class="thumb">
+                          <img src="/assets/images/flag/shipping.png" alt="image">
+                      </div>
+                      <div class="content">
+                          <p>
+                              Free Shipping <br> on order <strong>over &pound;10</strong>
+                          </p>
+                      </div>
+                  </div>
+                    
+                  
+              </div>
+          </div>
+      </div>
+    </header>
+
+
+
+    <!-- Cart Sidebar -->
+    <div id="cartSidebar" class="cart-sidebar">
+        <div class="cart-header">
+        <h4>Your Cart</h4>
+        <button id="closeCart" class="close-cart">&times;</button>
+        </div>
+        <div class="cart-items" id="cartItems">
+        <!-- JS will populate cart items here -->
+        </div>
+        <div class="cart-footer">
+        <strong>Total:</strong> <span id="cart-price">&pound;0.00</span>
+        <a href="/cart" class="checkout-btn">Checkout</a>
+        </div>
+    </div>
+
+    <!-- Preloader area start -->
+    <div class="loading">
+        <span class="text-capitalize">L</span>
+        <span>o</span>
+        <span>a</span>
+        <span>d</span>
+        <span>i</span>
+        <span>n</span>
+        <span>g</span>
+    </div>
+
+    <div id="preloader">
+    </div>
+    <!-- Preloader area end -->
+
+    <!-- Mouse cursor area start here -->
+    <div class="mouse-cursor cursor-outer"></div>
+    <div class="mouse-cursor cursor-inner"></div>
+    <!-- Mouse cursor area end here -->
+
+    <main>
+        <!-- Page banner area start here -->
+        <section class="page-banner bg-image pt-130 pb-130" data-background="/assets/images/cover2.jpg.png">
+            <div class="container">
+                <h2 class="wow fadeInUp mb-15" data-wow-duration="1.1s" data-wow-delay=".1s">StikeX Checkout</h2>
+                <div class="breadcrumb-list wow fadeInUp" data-wow-duration="1.3s" data-wow-delay=".3s">
+                    <a href="index-2.html" class="primary-hover"><i class="fa-solid fa-house me-1"></i> Home <i class="fa-regular text-white fa-angle-right"></i></a>
+                    <span>Checkout</span>
+                </div>
+            </div>
+        </section>
+        <!-- Page banner area end here -->
+    
+<!-- Checkout area start here -->
+<section class="checkout-area pt-130 pb-130">
+    <div class="container">
+      <div class="row g-4">
+        <!-- Left Column -->
+        <div class="col-lg-8">
+          <div class="checkout__item-left sub-bg">
+            <h3 class="mb-40">Billing & Shipping Details</h3>
+  
+            <!-- Address Dropdown -->
+            <label class="mb-10" for="addressSelect">Select Saved Address</label>
+            <select id="addressSelect" class="mb-20" onchange="handleAddressChange(this)">
+            <option value="placeholder">-- Choose an address --</option>
+            <option value="new">+ Enter New Address</option>
+
+            <% addresses.forEach((addr) => { %>
+                <option value="<%= addr.full_name %>, <%= addr.address_line1 %>, <%= addr.city %>, <%= addr.postal_code %>">
+                <%= addr.full_name %>, <%= addr.address_line1 %>, <%= addr.city %>, <%= addr.postal_code %>
+                </option>
+            <% }) %>
+            </select>
+
+  
+            <!-- Address Form -->
+            <div id="addressForm" style="display: none">
+              <label class="mb-10">Add new delivery address</label>
+              <h5 class="mb-10">Country / Region *</h5>
+              <select class="mb-20" name="country" id="country">
+                <option value="United Kingdom">United Kingdom</option>
+                <option value="United States">United States</option>
+                <option value="Australia">Australia</option>
+                <option value="Germany">Germany</option>
+                <option value="France">France</option>
+              </select>
+  
+              <label class="mb-10">Street Address *</label>
+              <div class="row">
+                <div class="col-6">
+                  <input placeholder="Address 1" class="mb-10" id="streetAddress" type="text" />
+                </div>
+                <div class="col-6">
+                  <input class="mb-20" placeholder="Address 2" id="streetAddress2" type="text" />
+                </div>
+              </div>
+  
+              <label class="mb-10">Town / City *</label>
+              <input class="mb-20" id="townName" type="text" />
+  
+              <h5 class="mb-10">State / Region *</h5>
+              <input class="mb-20" id="state" type="text" />
+  
+              <label class="mb-10">ZIP / Postal Code *</label>
+              <input class="mb-20" id="zipCode" type="text" />
+  
+              <label class="mb-10">Phone *</label>
+              <input class="mb-20" id="phone" type="text" />
+  
+              <a onclick="submitAddress()" class="btn-one mt-35 mb-20"><span>Add Address</span></a>
+            </div>
+  
+            <!-- Order Notes -->
+            <br /><br /><label class="mb-10" for="notes">Order Notes (Optional)</label>
+            <textarea placeholder="Note About Your Order . . ." name="notes" id="notes"></textarea>
+          </div>
+        </div>
+  
+        <!-- Right Column -->
+        <div class="col-lg-4">
+          <div class="checkout__item-right sub-bg">
+            <h3 class="mb-40">Your Order</h3>
+            <ul>
+              <li class="bor-bottom pb-4 d-flex justify-content-between">
+                <h4>Products</h4>
+                <h4>Subtotal</h4>
+              </li>
+  
+              <% const items = JSON.parse(itemsJson); %>
+              <% items.forEach(item => { %>
+                <li class="bor-bottom py-4 d-flex align-items-center">
+                  <div class="me-3" style="width: 60px;">
+                    <img src="<%= item.image %>" alt="<%= item.title %>" class="img-fluid rounded" />
+                  </div>
+                  <div class="flex-grow-1">
+                    <a href="#" class="fw-bold"><%= item.title %></a>
+                    <% if (item.quantity > 1) { %>
+                      <div class="small text-white">Quantity: <%= item.quantity %></div>
+                    <% } %>
+                  </div>
+                  <div class="text-end">
+                    <span>&pound;<%= (item.price * item.quantity).toFixed(2) %> <%= currency %></span>
+                  </div>
+                </li>
+              <% }); %>
+  
+              <li class="bor-bottom py-4 d-flex justify-content-between">
+                <h4>Subtotal</h4>
+                <h4>&pound;<%= totalAmount.toFixed(2) %> <%= currency %></h4>
+              </li>
+            </ul>
+  
+            <div class="py-4 bor-bottom">
+              <h5 class="mb-10">Shipping Address</h5>
+              <span id="addressView">No Address Selected</span>
+            </div>
+  
+            <p class="pt-30 bor-top" style="margin-bottom: 7%;">
+              Your personal data will be used to process and support this order.
+              To learn more, please read our <a href="/docs/privacy-policy" style="color:#fa4f09">Privacy Policy</a>.
+            </p>
+  
+            <a style="display: none;" id="place_order_btn" onclick="completePurchase();" class="btn-one mt-35">
+              <span>Place Order</span>
+            </a>
+  
+            <p id="addressMsg" class="pt-30 bor-top" style="color: red;">
+              Please add/select a delivery address to continue with this order.
+            </p>
+  
+
+            <div id="stripe-card" class="mt-4" style="display: none;">
+              <div id="card-element"></div>
+              <div id="card-errors" class="mt-3" style="color: #ff4d4d;"></div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Address Handling Scripts -->
+    <script>
+      document.addEventListener("DOMContentLoaded", loadAddresses);
+  
+      async function loadAddresses() {
+        const select = document.getElementById("addressSelect");
+  
+        try {
+          const res = await fetch("/addresses/all");
+          const addresses = await res.json();
+  
+          addresses.forEach(addr => {
+            const option = document.createElement("option");
+            option.value = `${addr.full_name}, ${addr.address_line1}, ${addr.city}, ${addr.postal_code}`;
+            option.textContent = option.value;
+            select.insertBefore(option, select.lastElementChild);
+
+            console.log(`Address added for ${addr.address_line1}`)
+          });
+        } catch (err) {
+          console.error("Failed to load addresses:", err);
+        }
+      }
+  
+      function handleAddressChange(select) {
+        const form = document.getElementById("addressForm");
+        const addressView = document.getElementById("addressView");
+        const btn = document.getElementById("place_order_btn");
+        const msg = document.getElementById("addressMsg");
+        const stripeCard = document.getElementById("stripe-card");
+  
+        if (select.value === "placeholder") {
+          addressView.textContent = "No Address Selected";
+          btn.style.display = "none";
+          msg.style.display = "block";
+          form.style.display = "none";
+          stripeCard.style.display = "none";
+        } else if (select.value === "new") {
+          addressView.textContent = "Please fill out the new address form.";
+          btn.style.display = "none";
+          msg.style.display = "block";
+          form.style.display = "block";
+          stripeCard.style.display = "none";
+        } else {
+          addressView.textContent = select.value;
+          btn.style.display = "block";
+          msg.style.display = "none";
+          form.style.display = "none";
+          stripeCard.style.display = "block";
+        }
+      }
+  
+      async function submitAddress() {
+        const payload = {
+          full_name: document.getElementById("streetAddress").value,
+          phone_number: document.getElementById("phone").value,
+          address_line1: document.getElementById("streetAddress").value,
+          address_line2: document.getElementById("streetAddress2").value,
+          city: document.getElementById("townName").value,
+          region: document.getElementById("state").value,
+          postal_code: document.getElementById("zipCode").value,
+          country: document.getElementById("country").value,
+          is_default: true
+        };
+  
+        try {
+
+            if(document.getElementById("phone").value === "" || document.getElementById("phone").value === undefined || document.getElementById("phone").value === null) {
+                console.log(`Not adding address`)
+            } else {
+                const res = await fetch("/addresses/add", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+        
+                const result = await res.json();
+                if (result.success) {
+                    alert("Address added!");
+                    location.reload(); // reload to get updated address dropdown
+                } else {
+                    alert("Error: " + result.error);
+                }
+            }
+
+
+        } catch (err) {
+          console.error("Add address error:", err);
+          alert("Failed to add address.");
+        }
+      }
+    </script>
+  </section>
+  <!-- Checkout area end here -->
+
+  <script src="https://js.stripe.com/v3/"></script>
+  <script>
+      const stripeKey = "<%= stripePublishableKey %>";
+      const stripe = stripeKey ? Stripe(stripeKey) : null;
+      const elements = stripe ? stripe.elements() : null;
+      const cardElement = elements ? elements.create("card") : null;
+
+      if (cardElement) {
+          cardElement.mount("#card-element");
+      }
+
+      async function completePurchase() {
+          if (!stripe || !cardElement) {
+              alert("Stripe is not configured. Please add your publishable key.");
+              return;
+          }
+
+          try {
+              const res = await fetch("/checkout/create-payment-intent", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                      address: getAddressDetails(),
+                      cartId: "<%= cartId %>",
+                      notes: document.getElementById("notes")?.value || ""
+                  })
+              });
+
+              const data = await res.json();
+              if (!res.ok) {
+                  throw new Error(data.error || "Failed to create payment intent.");
+              }
+
+              const result = await stripe.confirmCardPayment(data.clientSecret, {
+                  payment_method: {
+                      card: cardElement,
+                      billing_details: {
+                          name: "<%= req.session.user.first_name %> <%= req.session.user.last_name %>",
+                          email: "<%= req.session.user.email %>"
+                      }
+                  }
+              });
+
+              if (result.error) {
+                  document.getElementById("card-errors").textContent = result.error.message;
+                  return;
+              }
+
+              const finalize = await fetch("/checkout/complete", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                      orderId: data.orderId,
+                      paymentIntentId: result.paymentIntent.id,
+                      cartId: "<%= cartId %>"
+                  })
+              });
+
+              const finalizeResult = await finalize.json();
+              if (finalizeResult.success) {
+                  window.location.href = "/account?order=true";
+              } else {
+                  alert("Payment succeeded, but order finalization failed.");
+              }
+          } catch (err) {
+              console.error("Stripe checkout error:", err);
+              alert(err.message || "Checkout failed. Please try again.");
+          }
+      }
+
+      function getAddressDetails() {
+          const selected = document.getElementById("addressSelect")?.value;
+  
+          if (selected && selected !== "new" && selected !== "placeholder") {
+              const [full_name, address_line1, city, postal_code] = selected.split(",").map(s => s.trim());
+              return {
+                  full_name,
+                  address_line1,
+                  address_line2: '',
+                  city,
+                  region: '',
+                  postal_code,
+                  country: 'United Kingdom',
+                  phone: ''
+              };
+          }
+  
+          return {
+              full_name: "<%= req.session.user.first_name %> <% req.session.user.last_name %>",
+              address_line1: document.getElementById("streetAddress")?.value || '',
+              address_line2: document.getElementById("streetAddress2")?.value || '',
+              city: document.getElementById("townName")?.value || '',
+              region: document.getElementById("state")?.value || '',
+              postal_code: document.getElementById("zipCode")?.value || '',
+              country: document.querySelector('[name="country"]')?.value || '',
+              phone: document.getElementById("phone")?.value || ''
+          };
+      }
+  </script>
+  
+    
+
+    </main>
+    
+    
+
+    <!-- Footer area start here -->
+    <footer class="footer-area bg-image" data-background="/assets/images/footer/footer-bg.jpg">
+        <div class="container">
+            <div class="footer__wrp pt-65 pb-65 bor-top bor-bottom">
+                <div class="row g-4">
+                    <div class="col-xl-3 col-lg-6 col-md-6 wow fadeInUp" data-wow-duration="1.1s" data-wow-delay=".1s">
+                        <div class="footer__item">
+                            <h4 class="footer-title">Customer Service</h4>
+                            <ul>
+                                <li><a href="contact.html"><span></span>Help Portal</a></li>
+                                <li><a href="contact.html"><span></span>Contact Us</a></li>
+                                <li><a href="error.html"><span></span>Delivery Information</a></li>
+                                <li><a href="error.html"><span></span>Click and Collect</a></li>
+                                <li><a href="error.html"><span></span>Refunds and Returns</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-lg-6 col-md-6 wow fadeInUp" data-wow-duration="1.2s" data-wow-delay=".2s">
+                        <div class="footer__item">
+                            <h4 class="footer-title">Get to Know Us</h4>
+                            <ul>
+                                <li><a href="about.html"><span></span>About Us</a></li>
+                                <li><a href="blog-grid.html"><span></span>News & Blog</a></li>
+                                <li><a href="error.html"><span></span>Careers</a></li>
+                                <li><a href="error.html"><span></span>Investors</a></li>
+                                <li><a href="contact.html"><span></span>Contact Us</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-lg-6 col-md-6 wow fadeInUp" data-wow-duration="1.3s" data-wow-delay=".3s">
+                        <div class="footer__item">
+                            <h4 class="footer-title">vapes new collections</h4>
+                            <ul>
+                                <li><a href="shop.html"><span></span>E-Cigarettes</a></li>
+                                <li><a href="shop.html"><span></span>Vape Pens</a></li>
+                                <li><a href="shop.html"><span></span>Pod Systems</a></li>
+                                <li><a href="shop.html"><span></span>Disposable Vapes</a></li>
+                                <li><a href="shop.html"><span></span>Nicotine Salt Devices</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-lg-6 col-md-6 wow fadeInUp" data-wow-duration="1.4s" data-wow-delay=".4s">
+                        <div class="footer__item newsletter">
+                            <h4 class="footer-title">get newsletter</h4>
+                            <div class="subscribe">
+                                <input name="email" type="email" placeholder="Your Email">
+                                <button><i class="fa-solid fa-paper-plane"></i></button>
+                            </div>
+                            <div class="social-icon mt-40">
+                                <a href="#0"><i class="fa-brands fa-facebook-f"></i></a>
+                                <a href="#0"><i class="fa-brands fa-twitter"></i></a>
+                                <a href="#0"><i class="fa-brands fa-linkedin-in"></i></a>
+                                <a href="#0"><i class="fa-brands fa-youtube"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer__copy-text pt-50 pb-50">
+                <a href="index-2.html" class="logo d-block">
+                    <img height="50px" width="50px" style="height: 50px; width: 50px!important" src="/assets/images/logo/logo.png" alt="logo">
+                </a>
+                <p>&copy; Copyright 2023 <a href="#0" class="primary-hover">odor</a> All Rights Reserved</p>
+                <a href="#0" class="payment d-block image">
+                    <img src="/assets/images/icon/payment.png" alt="icon">
+                </a>
+            </div>
+        </div>
+    </footer>
+    <!-- Footer area end here -->
+
+    <!-- Back to top area start here -->
+    <div class="scroll-up">
+        <svg class="scroll-circle svg-content" width="100%" height="100%" viewBox="-1 -1 102 102">
+            <path d="M50,1 a49,49 0 0,1 0,98 a49,49 0 0,1 0,-98" />
+        </svg>
+    </div>
+    <!-- Back to top area end here -->
+
+    <!-- Jquery 3. 7. 1 Min Js -->
+    <script src="/assets/js/jquery-3.7.1.min.js"></script>
+    <!-- Bootstrap min Js -->
+    <script src="/assets/js/bootstrap.min.js"></script>
+    <!-- Swiper bundle min Js -->
+    <script src="/assets/js/swiper-bundle.min.js"></script>
+    <!-- Counterup min Js -->
+    <script src="/assets/js/jquery.counterup.min.js"></script>
+    <!-- Wow min Js -->
+    <script src="/assets/js/wow.min.js"></script>
+    <!-- Magnific popup min Js -->
+    <script src="/assets/js/magnific-popup.min.js"></script>
+    <!-- Nice select min Js -->
+    <script src="/assets/js/nice-select.min.js"></script>
+    <!-- Pace min Js -->
+    <script src="/assets/js/pace.min.js"></script>
+    <!-- Isotope pkgd min Js -->
+    <script src="/assets/js/isotope.pkgd.min.js"></script>
+    <!-- Waypoints Js -->
+    <script src="/assets/js/jquery.waypoints.js"></script>
+    <!-- Script Js -->
+    <script src="/assets/js/script.js"></script>
+</body>
+
+</html>
+
+

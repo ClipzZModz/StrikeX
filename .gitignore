@@ -29,3 +29,6 @@ Thumbs.db
 # Legacy and theme sources (kept outside version control)
 old_strikex/
 project_theme/
+
+# Private docs
+docs/business-plan.pdf

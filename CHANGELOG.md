@@ -6,6 +6,11 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ## [Unreleased]
 ### Added
 - Simple Node.js + Express + EJS layout with MySQL storage files.
+- Theme assets wired into `app/public` and homepage aligned to the StrikeX mission.
+- Legacy EJS views and assets brought forward from `old_strikex`.
+- Legacy routes, middleware, and cart sidebar wiring restored for working cart views.
+ - Stripe Payment Intents flow with Elements UI and webhook handler.
 
 ### Changed
 - Scoped the project to a single Express app using EJS views and the legacy DB schema.
+- Removed Braintree references and prepared Stripe env keys and schema field.

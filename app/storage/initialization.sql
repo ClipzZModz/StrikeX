@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS `users`
     `ip_address` VARCHAR(255) NOT NULL,
     `created_at` VARCHAR(255) NOT NULL,
     `auth` VARCHAR(255) NOT NULL default 'user',
-    braintree_id VARCHAR(255) NULL,
+    stripe_customer_id VARCHAR(255) NULL,
     PRIMARY KEY (`id`)
 );
 
@@ -25,6 +25,13 @@ CREATE TABLE IF NOT EXISTS `api_keys`
     `status` VARCHAR(255) NOT NULL,
     PRIMARY KEY (`id`),
     FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS `sessions` (
+    `session_id` VARCHAR(128) NOT NULL,
+    `expires` INT UNSIGNED NOT NULL,
+    `data` MEDIUMTEXT,
+    PRIMARY KEY (`session_id`)
 );
 
 CREATE TABLE IF NOT EXISTS `carts` (

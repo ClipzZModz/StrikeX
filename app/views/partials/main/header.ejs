@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StrikeX Customer Account</title>
+    <!-- Favicon img -->
+    <link rel="shortcut icon" href="assets/images/favicon.png">
+    <!-- Bootstarp min css -->
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <!-- All min css -->
+    <link rel="stylesheet" href="assets/css/all.min.css">
+    <!-- Swiper bundle min css -->
+    <link rel="stylesheet" href="assets/css/swiper-bundle.min.css">
+    <!-- Magnigic popup css -->
+    <link rel="stylesheet" href="assets/css/magnific-popup.css">
+    <!-- Animate css -->
+    <link rel="stylesheet" href="assets/css/animate.css">
+    <!-- Nice select css -->
+    <link rel="stylesheet" href="assets/css/nice-select.css">
+    <!-- Style css -->
+    <link rel="stylesheet" href="assets/css/style.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.min.js" integrity="sha512-ykZ1QQr0Jy/4ZkvKuqWn4iF3lqPZyij9iRv6sGqLRdTPkY69YX6+7wvVGmsdBbiIfN/8OdsI7HABjvEok6ZopQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    
+    <style type="text/css">
+
+
+        .account-overview {
+            margin-top: 10%!important;
+        }
+
+
+        .cart-items::-webkit-scrollbar {
+            width: 6px;
+        }
+        .cart-items::-webkit-scrollbar-thumb {
+            background-color: #333;
+            border-radius: 4px;
+        }
+        .cart-items::-webkit-scrollbar-track {
+            background-color: #222;
+        }
+
+
+
+        .cart-sidebar {
+            position: fixed;
+        top: 0;
+        right: -100%;
+        width: 350px;
+        max-width: 100%;
+        height: 100vh;
+        background: #191919;
+        box-shadow: -2px 0 10px rgba(0, 0, 0, 0.6);
+        transition: right 0.3s ease;
+        z-index: 1050;
+        display: flex;
+        flex-direction: column;
+        padding: 1.5rem 1rem;
+        color: #fff;
+        }
+
+        .cart-sidebar.open {
+        right: 0;
+        }
+
+        .cart-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #333;
+        padding-bottom: 0.75rem;
+        }
+
+        .cart-header h4 {
+        margin: 0;
+        font-size: 1.25rem;
+        color: #fff;
+        }
+
+        .cart-items {
+        flex-grow: 1;
+        overflow-y: auto;
+        margin-top: 1rem;
+        }
+
+        .cart-item {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 1.25rem;
+        align-items: center;
+        }
+
+        .cart-item img {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 6px;
+        border: 1px solid #333;
+        }
+
+        .cart-item-details {
+        flex-grow: 1;
+        color: #ccc;
+        font-size: 0.9rem;
+        }
+
+        .cart-footer {
+        border-top: 1px solid #333;
+        padding-top: 1rem;
+        color: #fff;
+        font-size: 1rem;
+        }
+
+        .checkout-btn {
+        display: block;
+        margin-top: 10px;
+        background: #fa4f09;
+        color: #fff;
+        padding: 12px;
+        text-align: center;
+        border-radius: 8px;
+        width: 100%;
+        text-decoration: none;
+        font-weight: bold;
+        transition: background 0.2s ease;
+        }
+
+        .checkout-btn:hover {
+        background: #e04808;
+        }
+
+        .close-cart {
+        background: none;
+        border: none;
+        font-size: 24px;
+        color: #fff;
+        cursor: pointer;
+        }
+
+
+
+
+    </style>
+
+
+</head>
+
+<body style="background-color: #191919; color: #fff;">
+    <!-- Header area start here -->
+    <div class="top__header pt-30 pb-30" style="background-color: #191919;">
+        <div class="container">
+            <div class="top__wrapper">
+                <a href="index-2.html" class="">
+                    <img height="70px" src="/assets/images/logo/logo.png" alt="">
+                </a>
+                <div class="search__wrp" style="margin-left: 5%">
+                    <input placeholder="Search for" aria-label="Search">
+                    <button><i class="fa-solid fa-search"></i></button>
+                </div>
+                <div class="account__wrap">
+                    <div class="account d-flex align-items-center">
+                        <div class="user__icon">
+                            <a href="#0"><i class="fa-regular fa-user"></i></a>
+                        </div>
+                        <a href="/account" class="acc__cont"><span>My Account</span></a>
+                    </div>
+                    <div class="cart d-flex align-items-center">
+                        <span class="cart__icon">
+                            <i class="fa-regular fa-cart-shopping"></i>
+                        </span>
+                        <a onclick="toggleCart(true)" class="c__one"><span>$0.00</span></a>
+                        <span class="one" style="background-color: #fa4f09;">0</span>
+                    </div>
+                      
+                </div>
+            </div>
+        </div>
+
+
+
+        
+    </div>
+    <!-- Header area end here -->
+
+    <header class="header-section">
+      <div class="container">
+          <div class="header-wrapper">
+              <div class="header-bar d-lg-none">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+              </div>
+              <ul class="main-menu">
+                  <li>
+                      <a href="#0">Home <i class="fa-regular fa-angle-down"></i></a>
+                      <ul class="sub-menu">
+                          <li class="subtwohober">
+                              <a href="index-2.html">
+                                  Home One
+                              </a>
+                          </li>
+                          <li class="subtwohober">
+                              <a href="index-light.html">
+                                  Home One Light
+                              </a>
+                          </li>
+                          <li class="subtwohober">
+                              <a href="index-3.html">
+                                  Home Two
+                              </a>
+                          </li>
+                          <li class="subtwohober">
+                              <a href="index-2-light.html">
+                                  Home Two Light
+                              </a>
+                          </li>
+                      </ul>
+                  </li>
+                  <li>
+                      <a href="about.html">About Us</a>
+                  </li>
+                  <li>
+                      <a href="#0">Pages <i class="fa-regular fa-angle-down"></i></a>
+                      <ul class="sub-menu">
+                          <li class="subtwohober">
+                              <a href="shop.html">
+                                  Shop Leftbar
+                              </a>
+                          </li>
+                          <li class="subtwohober">
+                              <a href="shop-2.html">
+                                  Shop Rightbar
+                              </a>
+                          </li>
+                          <li class="subtwohober">
+                              <a href="shop-single.html">
+                                  Shop Single
+                              </a>
+                          </li>
+                          <li class="subtwohober">
+                              <a href="cart.html">
+                                  Cart Page
+                              </a>
+                          </li>
+                          <li class="subtwohober">
+                              <a href="checkout.html">
+                                  Checkout Page
+                              </a>
+                          </li>
+                          <li class="subtwohober">
+                              <a href="register.html">
+                                  Register
+                              </a>
+                          </li>
+                          <li class="subtwohober">
+                              <a href="login.html">
+                                  Login
+                              </a>
+                          </li>
+                          <li class="subtwohober">
+                              <a href="error.html">
+                                  404 Error
+                              </a> 
+                          </li>
+                      </ul>
+                  </li>
+                  <li>
+                      <a href="#0">Blog <i class="fa-regular fa-angle-down"></i></a>
+                      <ul class="sub-menu">
+                          <li class="subtwohober">
+                              <a href="blog.html">
+                                  Blog Stander
+                              </a>
+                          </li>
+                          <li class="subtwohober">
+                              <a href="blog-grid.html">
+                                  Blog Grid
+                              </a>
+                          </li>
+                          <li class="subtwohober">
+                              <a href="blog-list.html">
+                                  Blog List
+                              </a>
+                          </li>
+                          <li class="subtwohober">
+                              <a href="blog-single.html">
+                                  Blog Single
+                              </a>
+                          </li>
+                      </ul>
+                  </li>
+                  <li>
+                      <a href="contact.html">Contact Us</a>
+                  </li>
+                  
+              </ul>
+              <div class="shipping__item d-none d-sm-flex align-items-center">
+                  <div class="menu__right d-flex align-items-center">
+                      <div class="thumb">
+                          <img src="/assets/images/flag/picking.png" alt="image">
+                      </div>
+
+                      
+                      <div class="content">
+                          <p>
+                              Picking up?
+                          </p>
+                          <div class="items">
+                              <select class="form__select p-0" style="color: white">
+                                  <option value="1">
+                                      Select Store
+                                  </option>
+                                  <option value="2">
+                                      Store One
+                                  </option>
+                                  <option value="3">
+                                      Store Two
+                                  </option>
+                                  <option value="3">
+                                      Store Three
+                                  </option>
+                              </select>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="menu__right d-flex align-items-center">
+                      <div class="thumb">
+                          <img src="/assets/images/flag/shipping.png" alt="image">
+                      </div>
+                      <div class="content">
+                          <p>
+                              Free Shipping <br> on order <strong>over &pound;10</strong>
+                          </p>
+                      </div>
+                  </div>
+                    
+                  
+              </div>
+          </div>
+      </div>
+    </header>
+
+

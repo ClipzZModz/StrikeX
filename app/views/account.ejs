@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StrikeX Customer Account</title>
+    <!-- Favicon img -->
+    <link rel="shortcut icon" href="/assets/images/favicon.png">
+    <!-- Bootstrap min css -->
+    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
+    <!-- All min css -->
+    <link rel="stylesheet" href="/assets/css/all.min.css">
+    <!-- Style css -->
+    <link rel="stylesheet" href="/assets/css/style.css">
+
+       <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
+
+
+  
+    <style type="text/css">
+
+
+        .add-to-cart:hover {
+            cursor: pointer;
+        }
+
+        .account-overview {
+            margin-top: 10%!important;
+        }
+    
+        .cart-items::-webkit-scrollbar {
+            width: 6px;
+        }
+        .cart-items::-webkit-scrollbar-thumb {
+            background-color: #333;
+            border-radius: 4px;
+        }
+        .cart-items::-webkit-scrollbar-track {
+            background-color: #222;
+        }
+    
+        .cart-sidebar {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 350px;
+            max-width: 100%;
+            height: 100vh;
+            background: #191919;
+            box-shadow: -2px 0 10px rgba(0, 0, 0, 0.6);
+            transition: right 0.3s ease;
+            z-index: 1050;
+            display: flex;
+            flex-direction: column;
+            padding: 1.5rem 1rem;
+            color: #fff;
+        }
+    
+        .cart-sidebar.open {
+            right: 0;
+        }
+    
+        .cart-header {
+            flex-shrink: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #333;
+            padding-bottom: 0.75rem;
+        }
+    
+        .cart-header h4 {
+            margin: 0;
+            font-size: 1.25rem;
+            color: #fff;
+        }
+    
+        .cart-items {
+            flex: 1 1 auto;
+            overflow-y: auto;
+            margin-top: 1rem;
+            max-height: calc(100vh - 200px); /* Adjust if needed */
+        }
+    
+        .cart-item {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 1.25rem;
+            align-items: center;
+        }
+    
+        .cart-item img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 6px;
+            border: 1px solid #333;
+        }
+    
+        .cart-item-details {
+            flex-grow: 1;
+            color: #ccc;
+            font-size: 0.9rem;
+        }
+    
+        .cart-footer {
+            flex-shrink: 0;
+            border-top: 1px solid #333;
+            padding-top: 1rem;
+            color: #fff;
+            font-size: 1rem;
+            background: #191919;
+        }
+    
+        .checkout-btn {
+            display: block;
+            margin-top: 10px;
+            background: #fa4f09;
+            color: #fff;
+            padding: 12px;
+            text-align: center;
+            border-radius: 8px;
+            width: 100%;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background 0.2s ease;
+        }
+    
+        .checkout-btn:hover {
+            background: #e04808;
+        }
+    
+        .close-cart {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #fff;
+            cursor: pointer;
+        }
+    
+    </style>
+
+</head>
+
+<body style="background-color: #191919; color: #fff;">
+    <!-- Header area start here -->
+    <div class="top__header pt-30 pb-30" style="background-color: #191919;">
+        <div class="container">
+            <div class="top__wrapper">
+                <a href="index-2.html" class="">
+                    <img height="70px" src="/assets/images/logo/logo.png" alt="">
+                </a>
+                <div class="search__wrp" style="margin-left: 5%">
+                    <input placeholder="Search for" aria-label="Search">
+                    <button><i class="fa-solid fa-search"></i></button>
+                </div>
+                <div class="account__wrap">
+                    <div class="account d-flex align-items-center">
+                        <div class="user__icon">
+                            <a href="#0"><i class="fa-regular fa-user"></i></a>
+                        </div>
+                        <a href="/account" class="acc__cont"><span>My Account</span></a>
+                    </div>
+                    <div class="cart d-flex align-items-center">
+                        <span class="cart__icon">
+                            <i class="fa-regular fa-cart-shopping"></i>
+                        </span>
+                        <a onclick="toggleCart(true)" class="c__one"><span>$0.00</span></a>
+                        <span class="one" style="background-color: #fa4f09;">0</span>
+                    </div>
+                      
+                </div>
+            </div>
+        </div>
+
+
+
+        
+    </div>
+    <!-- Header area end here -->
+
+    <header class="header-section">
+      <div class="container">
+          <div class="header-wrapper">
+              <div class="header-bar d-lg-none">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+              </div>
+              <ul class="main-menu">
+                  <li>
+                      <a href="#0">Home <i class="fa-regular fa-angle-down"></i></a>
+                      <ul class="sub-menu">
+                          <li class="subtwohober">
+                              <a href="index-2.html">
+                                  Home One
+                              </a>
+                          </li>
+                          <li class="subtwohober">
+                              <a href="index-light.html">
+                                  Home One Light
+                              </a>
+                          </li>
+                          <li class="subtwohober">
+                              <a href="index-3.html">
+                                  Home Two
+                              </a>
+                          </li>
+                          <li class="subtwohober">
+                              <a href="index-2-light.html">
+                                  Home Two Light
+                              </a>
+                          </li>
+                      </ul>
+                  </li>
+                  <li>
+                      <a href="about.html">About Us</a>
+                  </li>
+                  <li>
+                      <a href="#0">Pages <i class="fa-regular fa-angle-down"></i></a>
+                      <ul class="sub-menu">
+                          <li class="subtwohober">
+                              <a href="shop.html">
+                                  Shop Leftbar
+                              </a>
+                          </li>
+                          <li class="subtwohober">
+                              <a href="shop-2.html">
+                                  Shop Rightbar
+                              </a>
+                          </li>
+                          <li class="subtwohober">
+                              <a href="shop-single.html">
+                                  Shop Single
+                              </a>
+                          </li>
+                          <li class="subtwohober">
+                              <a href="cart.html">
+                                  Cart Page
+                              </a>
+                          </li>
+                          <li class="subtwohober">
+                              <a href="checkout.html">
+                                  Checkout Page
+                              </a>
+                          </li>
+                          <li class="subtwohober">
+                              <a href="register.html">
+                                  Register
+                              </a>
+                          </li>
+                          <li class="subtwohober">
+                              <a href="login.html">
+                                  Login
+                              </a>
+                          </li>
+                          <li class="subtwohober">
+                              <a href="error.html">
+                                  404 Error
+                              </a> 
+                          </li>
+                      </ul>
+                  </li>
+                  <li>
+                      <a href="#0">Blog <i class="fa-regular fa-angle-down"></i></a>
+                      <ul class="sub-menu">
+                          <li class="subtwohober">
+                              <a href="blog.html">
+                                  Blog Stander
+                              </a>
+                          </li>
+                          <li class="subtwohober">
+                              <a href="blog-grid.html">
+                                  Blog Grid
+                              </a>
+                          </li>
+                          <li class="subtwohober">
+                              <a href="blog-list.html">
+                                  Blog List
+                              </a>
+                          </li>
+                          <li class="subtwohober">
+                              <a href="blog-single.html">
+                                  Blog Single
+                              </a>
+                          </li>
+                      </ul>
+                  </li>
+                  <li>
+                      <a href="contact.html">Contact Us</a>
+                  </li>
+                  
+              </ul>
+              <div class="shipping__item d-none d-sm-flex align-items-center">
+                  <div class="menu__right d-flex align-items-center">
+                      <div class="thumb">
+                          <img src="/assets/images/flag/picking.png" alt="image">
+                      </div>
+
+                      
+                      <div class="content">
+                          <p>
+                              Picking up?
+                          </p>
+                          <div class="items">
+                              <select class="form__select p-0" style="color: white">
+                                  <option value="1">
+                                      Select Store
+                                  </option>
+                                  <option value="2">
+                                      Store One
+                                  </option>
+                                  <option value="3">
+                                      Store Two
+                                  </option>
+                                  <option value="3">
+                                      Store Three
+                                  </option>
+                              </select>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="menu__right d-flex align-items-center">
+                      <div class="thumb">
+                          <img src="/assets/images/flag/shipping.png" alt="image">
+                      </div>
+                      <div class="content">
+                          <p>
+                              Free Shipping <br> on order <strong>over &pound;10</strong>
+                          </p>
+                      </div>
+                  </div>
+                    
+                  
+              </div>
+          </div>
+      </div>
+    </header>
+
+    <!-- Cart Sidebar -->
+    <div id="cartSidebar" class="cart-sidebar">
+        <div class="cart-header">
+        <h4>Your Cart</h4>
+        <button id="closeCart" class="close-cart">&times;</button>
+        </div>
+        <div class="cart-items" id="cartItems">
+        <!-- JS will populate cart items here -->
+        </div>
+        <div class="cart-footer">
+        <strong>Total:</strong> <span id="cart-price">&pound;0.00</span>
+        <a href="/cart" class="checkout-btn">Checkout</a>
+        </div>
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
+    <script>
+        const notyf = new Notyf({
+          duration: 3000,
+          position: { x: 'left', y: 'bottom' },
+          types: [
+            {
+              type: 'warning',
+              background: 'orange',
+              icon: {
+                className: 'material-icons',
+                tagName: 'i',
+                text: 'warning',
+              },
+            },
+          ],
+        });
+      
+        function notify(type, message = '') {
+          switch (type) {
+            case 'success':
+              notyf.success(message || 'Product has been added to the cart!');
+              break;
+            case 'warning':
+              notyf.open({
+                type: 'warning',
+                message: message || 'There was a problem completing this request.',
+              });
+              break;
+            case 'danger':
+              notyf.error(message || 'There was an error adding this product to the cart.');
+              break;
+            default:
+              notyf.open({
+                type: 'warning',
+                message: message || 'Unknown Error!',
+              });
+              break;
+          }
+        }
+      
+        const cartItemsFromServer = <%- JSON.stringify(cartItems) %>;
+      
+        const cartButton = document.getElementById('cart-section');
+        const cartSidebar = document.getElementById('cartSidebar');
+        const closeCartBtn = document.getElementById('closeCart');
+        const cartItemsContainer = document.getElementById('cartItems');
+        const cartTotal = document.getElementById('cartTotal');
+        const buttonTotal = document.getElementById('cart-price');
+        const buttonQTY = document.getElementById('cart-count');
+      
+        let cart = [];
+      
+        const renderCart = async () => {
+          let currencyCode = 'GBP';
+          cartItemsContainer.innerHTML = '';
+          let total = 0;
+      
+          for (const { name, price, img, qty } of cart) {
+            let finalPrice = typeof price === 'number' ? price : 0;
+            let finalQty = typeof qty === 'number' ? qty : 1;
+            
+            const item = document.createElement('div');
+            item.className = 'cart-item';
+      
+            try {
+              const response = await fetch(`/checkout/product/${encodeURIComponent(name)}`);
+              if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+      
+              const result = await response.json();
+              const priceAmount = parseFloat(JSON.parse(result.productData[0].uk_price_obj).price.amount);
+      
+              item.innerHTML = `
+                <img src="${img}" alt="${name}" />
+                <div class="cart-item-details">
+                  <strong>${name}</strong><br>
+                  &pound;${priceAmount.toFixed(2)} GBP x ${finalQty}
+                </div>
+              `;
+      
+              buttonQTY.innerHTML = result.totalCartItems;
+              total += priceAmount * finalQty;
+              cartItemsContainer.appendChild(item);
+            } catch (error) {
+              console.error('Fetch error:', error);
+            }
+          }
+      
+          cartTotal.textContent = `\u00a3${total.toFixed(2)}`;
+          buttonTotal.textContent = `\u00a3${total.toFixed(2)}`;
+        };
+      
+        const toggleCart = (show = false) => {
+          cartSidebar.classList.toggle('open', show);
+        };
+      
+        const addItemToCart = (cartData) => {
+          if (!cartData?.lines?.edges?.length) {
+            console.error('Invalid cart data:', cartData);
+            return;
+          }
+      
+          cart = cartData.lines.edges.map((edge) => {
+            const item = edge.node;
+            return {
+              name: item.title || 'Unnamed Product',
+              price: parseFloat(item.price) || 0,
+              qty: parseInt(item.quantity) || 1,
+              img: item.image || 'assets/images/default.jpg',
+            };
+          });
+      
+          renderCart();
+          toggleCart(true);
+        };
+      
+        const addToCart = async (variantId, quantity) => {
+          try {
+            const qty = parseInt(document.getElementById('product-quantity')?.value, 10);
+      
+            console.log(qty)
+
+            const response = await fetch('/api/v1/cart/add', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ variantId, quantity: qty }),
+            });
+      
+            const result = await response.json();
+      
+            if (response.ok) {
+              addItemToCart(result.cart);
+              notify('success');
+            } else {
+              notify('danger', 'Failed to add item to cart');
+            }
+          } catch (error) {
+            notify('danger', 'An error occurred');
+          }
+        };
+      
+        document.addEventListener('DOMContentLoaded', async () => {
+          console.log('Cart items loaded from server:', cartItemsFromServer);
+      
+          // Just render the cart on page load — don't call addToCart
+          cart = cartItemsFromServer.map((item) => ({
+            name: item.title || 'Unnamed Product',
+            price: parseFloat(item.price) || 0,
+            qty: parseInt(item.quantity) || 1,
+            img: item.image || 'assets/images/default.jpg',
+          }));
+      
+          renderCart();
+      
+          // Button toggle listeners
+          cartButton.addEventListener('click', () => toggleCart(true));
+          closeCartBtn.addEventListener('click', () => toggleCart(false));
+      
+          // Add to cart button events
+          document.querySelectorAll('.add-to-cart').forEach((button) => {
+            button.addEventListener('click', async function () {
+              const productId = this.getAttribute('data-product-id');
+              const quantity = 1;
+      
+              try {
+                await addToCart(productId, quantity);
+      
+                cartItemsFromServer.push({
+                  merchandiseId: productId,
+                  quantity,
+                  title: this.getAttribute('data-title'),
+                  image: this.getAttribute('data-image'),
+                });
+              } catch (error) {
+                notify('danger');
+              }
+            });
+          });
+        });
+    </script>
+
+    <main>
+      
+      
+        <!-- Account Overview Area Start -->
+        <section class="account-overview" style="padding-top: 1%!important">
+            <div class="container">
+          
+
+            <!-- Navigation Tabs -->
+            <ul class="nav nav-tabs mb-4" style="border-bottom: 1px solid #fa4f09;" role="tablist">
+              <li class="nav-item" style="margin-right: 3px;">
+                <a
+                  class="nav-link active"
+                  id="overview-tab"
+                  data-bs-toggle="tab"
+                  href="#overview"
+                  role="tab"
+                  aria-controls="overview"
+                  aria-selected="true"
+                  style="color: #fff; border-bottom-color: #fa4f09;"
+                >
+                  <i class="fa-solid fa-house-user me-2"></i> Overview
+                </a>
+              </li>
+              <li class="nav-item" style="margin-right: 3px;">
+                <a
+                  class="nav-link"
+                  id="orders-tab"
+                  data-bs-toggle="tab"
+                  href="#orders"
+                  role="tab"
+                  aria-controls="orders"
+                  aria-selected="false"
+                  style="color: #ccc; background-color: #1a1a1a; border: 1px solid #333; border-bottom-color: #fa4f09;"
+                >
+                  <i class="fa-solid fa-box me-2"></i> Orders
+                </a>
+              </li>
+              <li class="nav-item" style="margin-right: 3px;">
+                <a
+                  class="nav-link"
+                  id="wishlist-tab"
+                  data-bs-toggle="tab"
+                  href="#wishlist"
+                  role="tab"
+                  aria-controls="wishlist"
+                  aria-selected="false"
+                  style="color: #ccc; background-color: #1a1a1a; border: 1px solid #333; border-bottom-color: #fa4f09;"
+                >
+                  <i class="fa-solid fa-heart me-2"></i> Wishlist
+                </a>
+              </li>
+              <li class="nav-item">
+                <a
+                  class="nav-link"
+                  id="details-tab"
+                  data-bs-toggle="tab"
+                  href="#details"
+                  role="tab"
+                  aria-controls="details"
+                  aria-selected="false"
+                  style="color: #ccc; background-color: #1a1a1a; border: 1px solid #333; border-bottom-color: #fa4f09;"
+                >
+                  <i class="fa-solid fa-user-gear me-2"></i> Account Details
+                </a>
+              </li>
+            </ul>
+
+            <style>
+              .nav-tabs .nav-link.active {
+                background-color: #2a2a2a !important;
+                color: #fff !important;
+                border: 1px solid #333 !important;
+                border-bottom: 2px solid #fa4f09 !important;
+              }
+
+              .nav-tabs .nav-link:hover,
+              .nav-tabs .nav-link:focus {
+                background-color: #333 !important;
+                color: #fff !important;
+                border: 1px solid #333 !important;
+                border-bottom: 2px solid #fa4f09 !important;
+              }
+
+              .nav-tabs .nav-link {
+                transition: background-color 0.3s, color 0.3s;
+              }
+            </style>
+
+          
+              <!-- Tab Content -->
+              <div class="tab-content">
+                <!-- Overview Tab -->
+                <div
+                  class="tab-pane fade show active"
+                  id="overview"
+                  role="tabpanel"
+                  aria-labelledby="overview-tab"
+                >
+                  <div class="mb-4" style="margin-top: -1%">
+
+                    <br /><% if(req.query.order) { %>
+                      <div class="alert alert-success" role="alert" style="text-align: center; font-size: 90%;">
+                          Many thanks for your order! You can view it below
+                      </div>
+                    <% } %><br />
+
+
+                    <h3 style="color: #fff;">
+                      Welcome Back, <span class="primary-color"> <%= req.session.user.firstName %> </span>
+                    </h3>
+                    <p style="color: #ccc;">Here’s a quick look at your StrikeX account.</p>
+                  </div>
+                  <div class="row mb-4">
+                    <div class="col-md-6">
+                      <div class="p-3 bg-dark rounded">
+                        <h5 style="color: #fa4f09;">
+                          <i class="fa-solid fa-box me-2"></i> Orders
+                        </h5>
+                        <p style="color: #fff;"><%= orders.length %> Total Orders</p>
+                      </div>
+                      <div style="margin-top: 2%;">
+                        <% if (orders.length > 0) { %>
+                          <table class="table table-dark">
+                            <thead>
+                              <tr>
+                                <th>Order #</th>
+                                <th>Date</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                                <th></th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <% orders.slice(0, 3).forEach(order => { %>
+                                <tr>
+                                  <td><%= order.id %></td>
+                                  <td><%= moment(order.date).format('MMMM Do YYYY') %></td>
+                                  <td>&pound;<%= parseInt(order.total).toFixed(2) %> GBP</td>
+                                  <td><%= order.status %></td>
+                                  <td>
+                                    <a href="/account/order/<%= order.id %>" style="color: #fa4f09;">View</a>
+                                  </td>
+                                </tr>
+                              <% }) %>
+                            </tbody>
+                          </table>
+                          <a href="#orders" style="color: #fa4f09;">View All Orders</a>
+                        <% } else { %>
+                          <p style="color: #ccc;">
+                            No recent orders yet. Start shopping for your fishing gear!
+                          </p>
+                        <% } %>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="p-3 bg-dark rounded">
+                        <h5 style="color: #fa4f09;">
+                          <i class="fa-solid fa-heart me-2"></i> Wishlist
+                        </h5>
+                        <p style="color: #fff;"><%= wishlist.length %> Saved Items</p>
+                      </div>
+                      <div style="margin-top: 2%;">
+                        <% if (wishlist.length > 0) { %>
+                          <table class="table table-dark">
+                            <thead>
+                              <tr>
+                                <th>Order #</th>
+                                <th>Date</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                                <th></th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <% wishlist.slice(0, 3).forEach(wishlist => { %>
+                                <tr>
+                                  <td><%= wishlist.id %></td>
+                                  <td><%= wishlist.date %></td>
+                                  <td><%= wishlist.total %></td>
+                                  <td><%= wishlist.status %></td>
+                                  <td>
+                                    <a href="/account/order/<%= wishlist.id %>" style="color: #fa4f09;">View</a>
+                                  </td>
+                                </tr>
+                              <% }) %>
+                            </tbody>
+                          </table>
+                          <a href="#orders" style="color: #fa4f09;">View All Orders</a>
+                        <% } else { %>
+                          <p style="color: #ccc;">There is nothing in your wishlist yet.</p>
+                        <% } %>
+                      </div>
+                    </div>
+
+                    <hr style="margin-top: 4%;" />
+                   
+                    <div class="col-12">
+                      <h4 style="color: #fff; margin-top: 3%; margin-bottom: 3%;">Recommended Products</h4>
+                      <div class="position-relative" style="padding: 0 60px;">
+                        <div id="recommendedProductsCarousel" class="carousel slide" data-bs-ride="carousel">
+                          <div class="carousel-inner">
+                            <% 
+                              const productsPerSlide = 3;
+                              for (let i = 0; i < recommendedProducts.length; i += productsPerSlide) { 
+                                const isActive = i === 0 ? 'active' : '';
+                            %>
+                              <div class="carousel-item <%= isActive %>">
+                                <div class="row g-4 justify-content-center">
+                                  <% 
+                                    recommendedProducts.slice(i, i + productsPerSlide).forEach(product => { 
+                                  %>
+                                    <div class="col-md-3">
+                                      <div class="product__item bor" style="background: #1a1a1a; border: 1px solid #333; padding: 15px;">
+                                        <a href="#0" class="wishlist" style="position: absolute; top: 10px; right: 10px;">
+                                          <i class="fa-regular fa-heart" style="color: #fa4f09;"></i>
+                                        </a>
+                                        <a href="/product/<%= product.merchandiseId %>" class="product__image d-block">
+                                          <img class="font-image" src="<%= product.image %>" alt="<%= product.title %>" style="max-height: 150px; object-fit: contain; margin: 0 auto;">
+                                        </a>
+                                        <div class="product__content text-center">
+                                          <h4 class="mb-10" style="font-size: 1.1rem;">
+                                            <a class="primary-hover" style="color: #fff;" href="/product/<%= product.merchandiseId %>">
+                                              <%= product.title %>
+                                            </a>
+                                          </h4>
+                                        </div>
+                                        <a class="product__cart d-block bor-top text-center" href="#0" style="padding: 10px; background: #fa4f09; color: #fff; text-decoration: none;">
+                                          <i class="fa-regular fa-cart-shopping me-1"></i>
+                                          <span>View Product</span>
+                                        </a>
+                                      </div>
+                                    </div>
+                                  <% }) %>
+                                </div>
+                              </div>
+                            <% } %>
+                          </div>
+                          <!-- Carousel Controls -->
+                          <button class="carousel-control-prev" type="button" data-bs-target="#recommendedProductsCarousel" data-bs-slide="prev" style="width: 50px; left: -60px;">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                          </button>
+                          <button class="carousel-control-next" type="button" data-bs-target="#recommendedProductsCarousel" data-bs-slide="next" style="width: 50px; right: -60px;">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                
+                  </div>
+                </div>
+
+                <!-- Orders Tab -->
+                <div class="tab-pane fade" id="orders" role="tabpanel" aria-labelledby="orders-tab">
+                  <div class="mb-4" style="margin-top: 3%">
+                    <h3 style="color: #fff;">Your Orders</h3>
+                    <p style="color: #ccc;">View all your recent orders below.</p>
+                  </div>
+                  <% if (orders.length > 0) { %>
+                    <table class="table table-dark">
+                      <thead>
+                        <tr>
+                          <th>Order #</th>
+                          <th>Date</th>
+                          <th>Total</th>
+                          <th>Status</th>
+                          <th></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <% orders.forEach(order => { %>
+                          <tr>
+                            <td><%= order.id %></td>
+                            <td><%= moment(order.date).format('MMMM Do YYYY') %></td>
+                            <td>&pound;<%= parseInt(order.total).toFixed(2) %> GBP</td>
+                            <td><%= order.status %></td>
+                            <td>
+                              <a href="/account/order/<%= order.id %>" style="color: #fa4f09;">View</a>
+                            </td>
+                          </tr>
+                        <% }) %>
+                      </tbody>
+                    </table>
+                  <% } else { %>
+                    <p style="color: #ccc;">No orders yet. Start shopping for your fishing gear!</p>
+                  <% } %>
+                </div>
+
+                <!-- Wishlist Tab -->
+                <div class="tab-pane fade" id="wishlist" role="tabpanel" aria-labelledby="wishlist-tab">
+                  <div class="mb-4" style="margin-top: 3%">
+                    <h3 style="color: #fff;">Your Wishlist</h3>
+                    <p style="color: #ccc;">View all your saved items below.</p>
+                  </div>
+                  <% if (wishlist.length > 0) { %>
+                    <table class="table table-dark">
+                      <thead>
+                        <tr>
+                          <th>Order #</th>
+                          <th>Date</th>
+                          <th>Total</th>
+                          <th>Status</th>
+                          <th></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <% wishlist.forEach(wishlist => { %>
+                          <tr>
+                            <td><%= wishlist.id %></td>
+                            <td><%= wishlist.date %></td>
+                            <td><%= wishlist.total %></td>
+                            <td><%= wishlist.status %></td>
+                            <td>
+                              <a href="/account/order/<%= wishlist.id %>" style="color: #fa4f09;">View</a>
+                            </td>
+                          </tr>
+                        <% }) %>
+                      </tbody>
+                    </table>
+                  <% } else { %>
+                    <p style="color: #ccc;">There is nothing in your wishlist yet.</p>
+                  <% } %>
+                </div>
+
+                <!-- Account Details Tab -->
+                <div class="tab-pane fade" id="details" role="tabpanel" aria-labelledby="details-tab">
+                  <div class="mb-4" style="margin-top: 3%">
+                    <h3 style="color: #fff;">Account Details</h3>
+                    <p style="color: #ccc;">Manage your account information below.</p>
+                  </div>
+                  <!-- Placeholder content; replace with actual account details form or data -->
+                  <p style="color: #ccc;">[Account details form or data goes here]</p>
+                </div>
+              </div>
+            </div>
+          </section>
+        <!-- Account Overview Area End -->
+    </main>
+
+    <!-- Bootstrap min Js -->
+    <script src="/assets/js/bootstrap.min.js"></script>
+    <!-- All min Js -->
+    <script src="/assets/js/all.min.js"></script>
+</body>
+
+</html>
+
+
