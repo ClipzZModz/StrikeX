@@ -44,6 +44,12 @@ async function loadCartWithTotals(cartId, userId) {
   let totalAmount = 0;
   let currency = "GBP";
 
+  if (!Array.isArray(cartItems) || cartItems.length === 0) {
+    const error = new Error("Cart is empty");
+    error.status = 400;
+    throw error;
+  }
+
   for (const item of cartItems) {
     const productRows = await secureQuery(
       "SELECT id, name, uk_price_obj FROM products WHERE id = ?",

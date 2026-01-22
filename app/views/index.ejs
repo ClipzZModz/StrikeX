@@ -151,184 +151,8 @@
 </head>
 
 <body style="background-color: #191919; color: #fff;">
-    <!-- Header area start here -->
-    <div class="top__header pt-30 pb-30" style="background-color: #191919;">
-        <div class="container">
-            <div class="top__wrapper">
-                <a href="index-2.html" class="">
-                    <img height="70px" src="/assets/images/logo/logo.png" alt="">
-                </a>
-                <div class="search__wrp" style="margin-left: 5%">
-                <form action="/api/v1/search" method="GET">
-                    <input name="q" placeholder="Search for" aria-label="Search">
-                    <button type="submit"><i class="fa-solid fa-search"></i></button>
-                </form>
-                </div>
-
-                <div class="account__wrap">
-                    <div class="account d-flex align-items-center">
-                        <div class="user__icon">
-                            <a href="#0"><i class="fa-regular fa-user"></i></a>
-                        </div>
-                        <a href="/account" class="acc__cont"><span>My Account</span></a>
-                    </div>
-                    <div class="cart d-flex align-items-center">
-                        <span class="cart__icon">
-                            <i class="fa-regular fa-cart-shopping"></i>
-                        </span>
-                        <a id="cart-section" class="c__one"><span id="cartTotal">&pound;0.00</span></a>
-                        <span class="one" id="cart-count" style="background-color: #fa4f09;">0</span>
-                    </div>
-                        
-                </div>
-            </div>
-        </div>
-
-
-
-        
-    </div>
-    <!-- Header area end here -->
-
-    <header class="header-section">
-      <div class="container">
-          <div class="header-wrapper">
-              <div class="header-bar d-lg-none">
-                  <span></span>
-                  <span></span>
-                  <span></span>
-              </div>
-              <ul class="main-menu">
-                  <li>
-                      <a href="/">Home</a>
-
-                  </li>
-
-                  <li>
-                      <a href="#0">Lures/Swimbaits <i class="fa-regular fa-angle-down"></i></a>
-                      <ul class="sub-menu">
-                          <li class="subtwohober">
-                              <a href="shop.html">
-                                Soft Lures
-                              </a>
-                          </li>
-                          <li class="subtwohober">
-                              <a href="shop-2.html">
-                                  Dropshots
-                              </a>
-                          </li>
-                          <li class="subtwohober">
-                              <a href="shop-single.html">
-                                  Jerkbaits
-                              </a>
-                          </li>
-                          <li class="subtwohober">
-                              <a href="cart.html">
-                                  Top Water
-                              </a>
-                          </li>
-
-                          <li class="subtwohober">
-                              <a href="cart.html">
-                                  (For Each Lures Categories)
-                              </a>
-                          </li>
-                      </ul>
-                  </li>
-
-                  <li>
-                      <a href="#0">DIY Lure Kits <i class="fa-regular fa-angle-down"></i></a>
-                      <ul class="sub-menu">
-                          <li class="subtwohober">
-                              <a href="shop.html">
-                                Injection Molding
-                              </a>
-                          </li>
-
-                          <li class="subtwohober">
-                              <a href="cart.html">
-                                  3D Printing
-                              </a>
-                          </li>
-                      </ul>
-                  </li>
-
-
-                  <li>
-                      <a href="#0">Blogs <i class="fa-regular fa-angle-down"></i></a>
-                      <ul class="sub-menu">
-                          <li class="subtwohober">
-                              <a href="shop.html">
-                                DIY Lure Making
-                              </a>
-                          </li>
-
-                          <li class="subtwohober">
-                              <a href="cart.html">
-                                  (For Each Blog Categories)
-                              </a>
-                          </li>
-                      </ul>
-                  </li>
-
-                  <li>
-                      <a href="#0">DIY Guides <i class="fa-regular fa-angle-down"></i></a>
-                      <ul class="sub-menu">
-                          <li class="subtwohober">
-                              <a href="shop.html">
-                                DIY Lure Making
-                              </a>
-                          </li>
-
-                          <li class="subtwohober">
-                              <a href="cart.html">
-                                  (For Each Blog Categories)
-                              </a>
-                          </li>
-                      </ul>
-                  </li>
-
-                  <li>
-                      <a href="contact.html">Contact Us</a>
-                  </li>
-                  
-              </ul>
-              <div class="shipping__item d-none d-sm-flex align-items-center">
-                  <div class="menu__right d-flex align-items-center">
-                      <div class="thumb">
-                          <img src="/assets/images/flag/shipping.png" alt="image">
-                      </div>
-                      <div class="content">
-                          <p>
-                              Free Shipping <br> on order <strong>over &pound;10</strong>
-                          </p>
-                      </div>
-                  </div>
-                    
-                  
-              </div>
-          </div>
-      </div>
-    </header>
-
-
-
-    <!-- Cart Sidebar -->
-    <div id="cartSidebar" class="cart-sidebar">
-        <div class="cart-header">
-        <h4>Your Cart</h4>
-        <button id="closeCart" class="close-cart">&times;</button>
-        </div>
-        <div class="cart-items" id="cartItems">
-        <!-- JS will populate cart items here -->
-        </div>
-        <div class="cart-footer">
-        <strong>Total:</strong> <span id="cart-price">&pound;0.00</span>
-        <a href="/cart" class="checkout-btn">Checkout</a>
-        </div>
-    </div>
-      
-      
+    <%- include('partials/main/site_header') %>
+    <%- include('partials/main/cart_system') %>
 
 
     <!-- Preloader area start -->
@@ -569,175 +393,22 @@
                     }
 
 
-                    // Inject cart items from the server into a frontend array
-                    const cartItems = <%- JSON.stringify(cartItems) %>;
-                  
+                    window.cartItemsFromServer = <%- JSON.stringify(cartItems) %>;
 
-                    const cartButton = document.getElementById('cart-section');
-                    const cartSidebar = document.getElementById('cartSidebar');
-                    const closeCartBtn = document.getElementById('closeCart');
-                    const cartItemsContainer = document.getElementById('cartItems');
-                    const cartTotal = document.getElementById('cartTotal');
-                    const buttonTotal = document.getElementById("cart-price");
-                    const buttonQTY = document.getElementById("cart-count");
-                  
-                    let cart = [];
-                  
-                    const addItemToCart = (cartData) => {
-                        if (!cartData || !cartData.lines || !Array.isArray(cartData.lines.edges)) {
-                            console.error('Invalid cart data structure:', cartData);
-                            return;
-                        }
-            
-                        console.log('Updated cart data from server:', cartData);
-            
-                        cart = cartData.lines.edges.map(edge => {
-                            const item = edge.node;
-            
-                            console.log('Cart item:', item);
-            
-                            const price = parseFloat(item.price);
-                            const quantity = parseInt(item.quantity);
-            
-                            return {
-                            name: item.title || 'Unnamed Product',
-                            price: !isNaN(price) ? price : 0,
-                            qty: !isNaN(quantity) ? quantity : 1,
-                            img: item.image || 'assets/images/default.jpg'
-                            };
-                        });
-            
-                        renderCart();
-                        toggleCart(true);
-                        };
-            
-                            
-                        const renderCart = async () => {
-            
-                            let currencyCode = 'GBP';
-            
-                            cartItemsContainer.innerHTML = '';
-                            let total = 0;
-            
-                            for (const { name, price, img, qty } of cart) {
-                                let finalPrice = price;
-                                let finalQty = qty;
-            
-                                if (typeof finalPrice !== 'number' || isNaN(finalPrice)) finalPrice = 0;
-                                if (typeof finalQty !== 'number' || isNaN(finalQty)) finalQty = 1;
-            
-                                const item = document.createElement('div');
-                                item.className = 'cart-item';
-            
-            
-                                try {
-                                const response = await fetch(`/checkout/product/${encodeURIComponent(name)}`, {
-                                    method: 'GET',
-                                });
-            
-                                if (!response.ok) {
-                                    throw new Error(`HTTP error! Status: ${response.status}`);
-                                }
-            
-                                const result = await response.json();
-                                const priceAmount = parseFloat(JSON.parse(result.productData[0].uk_price_obj).price.amount);
-            
-                                item.innerHTML = `
-                                    <img src="${img}" alt="${name}" />
-                                    <div class="cart-item-details">
-                                    <strong>${name}</strong><br>
-                                    &pound;${priceAmount.toFixed(2)} GBP x ${finalQty}
-                                    </div>
-                                `;
-            
-            
-                                buttonQTY.innerHTML = result.totalCartItems;
-            
-                                total += priceAmount * finalQty;
-                                cartItemsContainer.appendChild(item);
-            
-                                } catch (error) {
-                                console.error('Fetch error:', error);
-                                }
-                            }
-            
-                            cartTotal.textContent = `\u00a3${total.toFixed(2)}`;
-                            buttonTotal.textContent = `\u00a3${total.toFixed(2)}`;
-
-                    };
-            
-                  
-                    const toggleCart = (show = false) => {
-                      if (show) {
-                        cartSidebar.classList.add('open');
-                      } else {
-                        cartSidebar.classList.remove('open');
-                      }
-                    };
-                  
-                    cartButton.addEventListener('click', () => toggleCart(true));
-                    closeCartBtn.addEventListener('click', () => toggleCart(false));
-                  
-                    const addToCart = async (variantId, quantity = 1) => {
-                      try {
-            
-                        const response = await fetch('/api/v1/cart/add', {
-                          method: 'POST',
-                          headers: { 'Content-Type': 'application/json' },
-                          body: JSON.stringify({ variantId, quantity })
-                        });
-                  
-                        const result = await response.json();
-                  
-                        if (response.ok) {
-                          addItemToCart(result.cart);
-                        } else {
-                            notify('danger');
-                        }
-                      } catch (error) {
-                        notify('danger');
-                      }
-                    };
-
-                    document.addEventListener('DOMContentLoaded', async function () {
-                        
-                      console.log('Cart items loaded from server:', cartItems);
-                  
-                      // Add preloaded cart items to cart logic (if needed)
-                      for (const cartItem of cartItems) {
-                        console.log('Cart item from server:', cartItem); // Check structure
-                        if (cartItem.merchandiseId && cartItem.quantity) {
-                          try {
-                            await addToCart(cartItem.merchandiseId, 0);
-                          } catch (e) {
-                            notify('unknown');
-                          }
-                        } else {
-                            notify('danger');
-                        }
-                      }
-                  
-                      // Attach event listeners to "Add to Cart" buttons
+                    document.addEventListener('DOMContentLoaded', () => {
                       document.querySelectorAll('.add-to-cart-btn').forEach(button => {
                         button.addEventListener('click', async function () {
                           const productId = this.getAttribute('data-product-id');
                           const quantity = 1;
-                  
+
+                          if (!window.addToCart) {
+                            notify('danger');
+                            return;
+                          }
+
                           try {
-                            await addToCart(productId, quantity);
-                  
-                            // Push to local array
-                            cartItems.push({
-                              merchandiseId: productId,
-                              quantity: quantity,
-                              title: this.getAttribute('data-title'),
-                              image: this.getAttribute('data-image')
-                            });
-
+                            await window.addToCart(productId, quantity);
                             notify('success');
-
-                        
-
                           } catch (error) {
                             notify('danger');
                           }
@@ -1244,5 +915,7 @@
 </body>
 
 </html>
+
+
 
 

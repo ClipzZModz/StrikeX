@@ -8,20 +8,26 @@
         <!-- JS will populate cart items here -->
         </div>
         <div class="cart-footer">
-        <strong>Total:</strong> <span id="cartTotal">&pound;0.00</span>
+        <strong>Total:</strong> <span id="cartTotalSidebar">&pound;0.00</span>
         <a href="/cart" class="checkout-btn">Checkout</a>
         </div>
     </div>
     
 
     <script>
-        const cartButton = document.getElementById("cart-section");
+        if (window.__cartSystemInitialized) {
+          // Avoid double-initialization if included more than once.
+        } else {
+        window.__cartSystemInitialized = true;
+
+        const cartButtons = Array.from(document.querySelectorAll('[data-cart-toggle="true"]'));
         const cartSidebar = document.getElementById('cartSidebar');
         const closeCartBtn = document.getElementById('closeCart');
         const cartItemsContainer = document.getElementById('cartItems');
-        const cartTotal = document.getElementById('cartTotal');
-        const buttonTotal = document.getElementById("cart-price");
-        const buttonQTY = document.getElementById("cart-count");
+        const cartTotalHeader = document.getElementById('cartTotal');
+        const cartTotalSidebar = document.getElementById('cartTotalSidebar');
+        const cartTotalEls = Array.from(document.querySelectorAll('.cart-total'));
+        const cartCountEls = Array.from(document.querySelectorAll('.cart-count'));
       
         let cart = [];
       
@@ -51,6 +57,19 @@
 
             renderCart();
             toggleCart(true);
+            };
+
+            const hydrateCartFromServer = (items) => {
+                if (!Array.isArray(items) || items.length === 0) return;
+
+                cart = items.map(item => ({
+                    name: item.title || item.name || 'Unnamed Product',
+                    price: parseFloat(item.price) || 0,
+                    qty: parseInt(item.quantity, 10) || 1,
+                    img: item.image || 'assets/images/default.jpg'
+                }));
+
+                renderCart();
             };
 
                 
@@ -93,7 +112,9 @@
                     `;
 
 
-                    buttonQTY.innerHTML = result.totalCartItems;
+                    cartCountEls.forEach((el) => {
+                      el.innerHTML = result.totalCartItems;
+                    });
 
                     total += priceAmount * finalQty;
                     cartItemsContainer.appendChild(item);
@@ -103,8 +124,15 @@
                     }
                 }
 
-                cartTotal.textContent = `\u00a3${total.toFixed(2)}`;
-                buttonTotal.textContent = `\u00a3${total.toFixed(2)}`;
+                if (cartTotalHeader) {
+                  cartTotalHeader.textContent = `\u00a3${total.toFixed(2)}`;
+                }
+                if (cartTotalSidebar) {
+                  cartTotalSidebar.textContent = `\u00a3${total.toFixed(2)}`;
+                }
+                cartTotalEls.forEach((el) => {
+                  el.textContent = `\u00a3${total.toFixed(2)}`;
+                });
                 };
 
       
@@ -116,8 +144,27 @@
           }
         };
       
-        cartButton.addEventListener('click', () => toggleCart(true));
-        closeCartBtn.addEventListener('click', () => toggleCart(false));
+        cartButtons.forEach((btn) => {
+          btn.addEventListener('click', (event) => {
+            event.stopPropagation();
+            toggleCart(true);
+          });
+        });
+
+        if (closeCartBtn) {
+          closeCartBtn.addEventListener('click', () => toggleCart(false));
+        }
+
+        document.addEventListener('mousedown', (event) => {
+          if (!cartSidebar.classList.contains('open')) return;
+
+          const clickedInsideSidebar = cartSidebar.contains(event.target);
+          const clickedCartButton = cartButtons.some((btn) => btn.contains(event.target));
+
+          if (!clickedInsideSidebar && !clickedCartButton) {
+            toggleCart(false);
+          }
+        });
       
         const addToCart = async (variantId, quantity = 1) => {
           try {
@@ -142,6 +189,16 @@
             alert('An unexpected error occurred. Please try again later.');
           }
         };
+
+        window.addToCart = addToCart;
+        window.toggleCart = toggleCart;
+
+        document.addEventListener('DOMContentLoaded', () => {
+          if (window.cartItemsFromServer) {
+            hydrateCartFromServer(window.cartItemsFromServer);
+          }
+        });
+        }
       </script>
 
 

@@ -31,7 +31,7 @@ router.get('/:cartId', async (req, res) => {
     }
 
     if (!cart.cart_items || cart.cart_items === '[]') {
-      return res.status(400).json({ error: 'Cart is empty' });
+      return res.redirect('/cart?empty=true');
     }
 
     let cartItems;

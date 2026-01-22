@@ -42,7 +42,7 @@ class indexAPi {
 
       // If no items, render immediately
       if (cartItems.length === 0) {
-        res.render('login', { site_key: process.env.RECAPTCHA_site, req, title: 'Express', cartItems });
+        return res.render('login', { site_key: process.env.RECAPTCHA_site, req, title: 'Express', cartItems });
       }
 
       // Get prices for each cart item using their merchandiseId
@@ -67,7 +67,7 @@ class indexAPi {
 
       console.log(cartItems)
 
-      res.render('login', { site_key: process.env.RECAPTCHA_site, req, title: 'Express', cartItems });
+      return res.render('login', { site_key: process.env.RECAPTCHA_site, req, title: 'Express', cartItems });
     });
 
 

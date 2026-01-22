@@ -349,7 +349,7 @@ router.get('/products/:category/:product_name', middleware.verifySession, functi
 
       // If no items, render immediately
       if (cartItems.length === 0) {
-        res.render('cart_single', {
+        return res.render('cart_single', {
           req, // Pass the request object
           title: 'Cart - ' + productData.title, // Page title
           product: productData, // Product data object
@@ -379,7 +379,7 @@ router.get('/products/:category/:product_name', middleware.verifySession, functi
 
       console.log(cartItems)
 
-      res.render('cart_single', {
+      return res.render('cart_single', {
         req, // Pass the request object
         title: 'Cart - ' + productData.title, // Page title
         product: productData, // Product data object
