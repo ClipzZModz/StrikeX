@@ -2582,6 +2582,9 @@ input {
   background-color: var(--white);
   gap: 19px;
 }
+.header-wrapper .shipping__item .cart:hover {
+  cursor: pointer;
+}
 .header-wrapper .shipping__item .cart .cart__icon {
   width: 51px;
   height: 48px;

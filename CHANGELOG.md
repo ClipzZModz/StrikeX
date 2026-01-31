@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
 ## [Unreleased]
+### Changed
+- Added hover cursor to the header cart button.
+- Changed theme over to new fresh theme
+
+## [1.0.1-pre] - 2026-01-22
 ### Added
 - Simple Node.js + Express + EJS layout with MySQL storage files.
 - Theme assets wired into `app/public` and homepage aligned to the StrikeX mission.

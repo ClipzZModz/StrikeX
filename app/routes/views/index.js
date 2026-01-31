@@ -167,6 +167,160 @@ router.get('/', middleware.verifySession, async function(req, res) {
   }
 });
 
+// GET Home Page (Alt layout)
+router.get('/home2', middleware.verifySession, async function(req, res) {
+  try {
+    const [softLureProducts, softDropshopProducts, plasticJerkbaitLures] = await Promise.all([
+      fetchProductsByTag('soft-paddle-lures'),
+      fetchProductsByTag('soft-dropshop-lures'),
+      fetchProductsByTag('plastic-jerkbait-lures'),
+    ]);
+
+    // Fetch cart items
+    db.secureQuery(`SELECT cart_items FROM carts WHERE session_id = ?`, [req.session.sessionID], async function(results) {
+      let cartItems = [];
+
+      results.forEach(row => {
+        if (row.cart_items) {
+          try {
+            const items = JSON.parse(row.cart_items); // Expecting array of item objects
+            cartItems.push(...items);
+          } catch (e) {
+            console.error("Error parsing cart_items:", e);
+          }
+        }
+      });
+
+      // If no items, render immediately
+      if (cartItems.length === 0) {
+        return res.render('index-02', {
+          plastic_jerkbait_lures: plasticJerkbaitLures,
+          soft_dropshop_products: softDropshopProducts,
+          soft_lure_products: softLureProducts,
+          req,
+          title: 'Express',
+          cartItems,
+          site_key: process.env.RECAPTCHA_site
+        });
+      }
+
+      // Get prices for each cart item using their merchandiseId
+      await Promise.all(cartItems.map(async (item) => {
+        return new Promise((resolve) => {
+          db.secureQuery(`SELECT uk_price_obj FROM products WHERE id = ?`, [item.merchandiseId], function(productResults) {
+            try {
+              if (productResults.length > 0) {
+                const price = JSON.parse(productResults[0].uk_price_obj).price.amount;
+                item.price = parseFloat(price).toFixed(2);
+              } else {
+                item.price = null;
+              }
+            } catch (e) {
+              console.error("Error parsing price for item ID:", item.merchandiseId, e);
+              item.price = null;
+            }
+            resolve();
+          });
+        });
+      }));
+
+      console.log(cartItems)
+
+      // Now render page
+      res.render('index-02', {
+        plastic_jerkbait_lures: plasticJerkbaitLures,
+        soft_dropshop_products: softDropshopProducts,
+        soft_lure_products: softLureProducts,
+        req,
+        title: 'Express',
+        cartItems,
+        site_key: process.env.RECAPTCHA_site
+      });
+    });
+
+  } catch (error) {
+    console.error("Error loading homepage:", error);
+    res.status(500).send('Error loading products');
+  }
+});
+
+// GET Home Page (Final layout)
+router.get('/home3', middleware.verifySession, async function(req, res) {
+  try {
+    const [softLureProducts, softDropshopProducts, plasticJerkbaitLures] = await Promise.all([
+      fetchProductsByTag('soft-paddle-lures'),
+      fetchProductsByTag('soft-dropshop-lures'),
+      fetchProductsByTag('plastic-jerkbait-lures'),
+    ]);
+
+    // Fetch cart items
+    db.secureQuery(`SELECT cart_items FROM carts WHERE session_id = ?`, [req.session.sessionID], async function(results) {
+      let cartItems = [];
+
+      results.forEach(row => {
+        if (row.cart_items) {
+          try {
+            const items = JSON.parse(row.cart_items); // Expecting array of item objects
+            cartItems.push(...items);
+          } catch (e) {
+            console.error("Error parsing cart_items:", e);
+          }
+        }
+      });
+
+      // If no items, render immediately
+      if (cartItems.length === 0) {
+        return res.render('index-03', {
+          plastic_jerkbait_lures: plasticJerkbaitLures,
+          soft_dropshop_products: softDropshopProducts,
+          soft_lure_products: softLureProducts,
+          req,
+          title: 'Express',
+          cartItems,
+          site_key: process.env.RECAPTCHA_site
+        });
+      }
+
+      // Get prices for each cart item using their merchandiseId
+      await Promise.all(cartItems.map(async (item) => {
+        return new Promise((resolve) => {
+          db.secureQuery(`SELECT uk_price_obj FROM products WHERE id = ?`, [item.merchandiseId], function(productResults) {
+            try {
+              if (productResults.length > 0) {
+                const price = JSON.parse(productResults[0].uk_price_obj).price.amount;
+                item.price = parseFloat(price).toFixed(2);
+              } else {
+                item.price = null;
+              }
+            } catch (e) {
+              console.error("Error parsing price for item ID:", item.merchandiseId, e);
+              item.price = null;
+            }
+            resolve();
+          });
+        });
+      }));
+
+      console.log(cartItems)
+
+      // Now render page
+      res.render('index-03', {
+        plastic_jerkbait_lures: plasticJerkbaitLures,
+        soft_dropshop_products: softDropshopProducts,
+        soft_lure_products: softLureProducts,
+        req,
+        title: 'Express',
+        cartItems,
+        site_key: process.env.RECAPTCHA_site
+      });
+    });
+
+  } catch (error) {
+    console.error("Error loading homepage:", error);
+    res.status(500).send('Error loading products');
+  }
+});
+
 
 
 router.get('/cart', middleware.verifySession, (req, res) => {
