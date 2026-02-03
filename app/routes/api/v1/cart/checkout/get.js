@@ -9,6 +9,28 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
+async function fetchCoupon(code) {
+  if (!code) return null;
+  const normalized = String(code).trim().toUpperCase();
+  if (!normalized) return null;
+  return await new Promise((resolve, reject) => {
+    db.secureQuery(
+      `
+        SELECT id, code, percent_off, min_subtotal, active, starts_at, ends_at, usage_limit, times_used
+        FROM coupons
+        WHERE UPPER(code) = ?
+        LIMIT 1
+      `,
+      [normalized],
+      (rows, error) => {
+        if (error) return reject(error);
+        if (!rows || rows.length === 0) return resolve(null);
+        return resolve(rows[0]);
+      }
+    );
+  });
+}
+
 router.get('/:cartId', async (req, res) => {
   const cartId = req.params.cartId;
   const sessionId = req.session.sessionID;
@@ -50,7 +72,7 @@ router.get('/:cartId', async (req, res) => {
       for (const item of cartItems) {
         const productResult = await new Promise((resolve, reject) => {
           db.secureQuery(
-            'SELECT uk_price_obj, images FROM products WHERE id = ?',
+            'SELECT name, category, description, uk_price_obj, images FROM products WHERE id = ?',
             [item.merchandiseId],
             (result, error) => {
               if (error || result.length === 0) reject(new Error('Product not found'));
@@ -88,7 +110,9 @@ router.get('/:cartId', async (req, res) => {
         updatedItems.push({
           merchandiseId: item.merchandiseId,
           quantity: item.quantity,
-          title: item.title,
+          title: item.title || productResult.name,
+          description: productResult.description,
+          firstTag: productResult.category,
           price: amount,
           currency: itemCurrency,
           image: imageUrl
@@ -101,7 +125,60 @@ router.get('/:cartId', async (req, res) => {
 
     const itemsJson = JSON.stringify(updatedItems);
 
-    // 💳 Fetch addresses if logged in
+    const subtotalAmount = parseFloat(totalAmount.toFixed(2));
+    let discountAmount = 0;
+    let couponApplied = null;
+    let couponMessage = null;
+
+    if (req.session?.couponCode) {
+      try {
+        const coupon = await fetchCoupon(req.session.couponCode);
+        const now = new Date();
+        const minSubtotal = parseFloat(coupon?.min_subtotal || 0);
+        const isValid =
+          coupon &&
+          coupon.active &&
+          subtotalAmount >= minSubtotal &&
+          (!coupon.starts_at || new Date(coupon.starts_at) <= now) &&
+          (!coupon.ends_at || new Date(coupon.ends_at) >= now) &&
+          (coupon.usage_limit === null || coupon.times_used < coupon.usage_limit);
+
+        if (isValid) {
+          couponApplied = coupon.code;
+          discountAmount = parseFloat((subtotalAmount * (coupon.percent_off / 100)).toFixed(2));
+        } else {
+          req.session.couponCode = null;
+          couponMessage = 'Coupon removed: subtotal below minimum or inactive.';
+        }
+      } catch (err) {
+        console.error('Coupon lookup error:', err);
+        couponMessage = 'Unable to validate coupon right now.';
+      }
+    }
+
+    const shippingAmount = 0;
+    const grandTotal = parseFloat((subtotalAmount - discountAmount + shippingAmount).toFixed(2));
+
+    const renderCheckout = (addresses = []) => res.render('checkout', {
+      title: 'StrikeX - Checkout',
+      itemsJson,
+      items: updatedItems,
+      req,
+      totalAmount: grandTotal,
+      subtotalAmount,
+      discountAmount,
+      shippingAmount,
+      currency,
+      couponApplied,
+      couponMessage,
+      addresses,
+      cartId,
+      isLoggedIn,
+      authRedirect: `/auth/register?redirect_uri=${encodeURIComponent(req.originalUrl)}`,
+      stripePublishableKey: process.env.STRIPE_PUBLISHABLE_KEY || ''
+    });
+
+    // Fetch addresses if logged in, else render as guest
     if (isLoggedIn) {
       db.secureQuery('SELECT * FROM addresses WHERE user_id = ?', [user.id], (addresses, error) => {
         if (error) {
@@ -109,21 +186,10 @@ router.get('/:cartId', async (req, res) => {
           return res.status(500).json({ error: 'Failed to load addresses' });
         }
 
-        res.render('checkout', {
-          title: 'StrikeX - Checkout',
-          itemsJson,
-          req,
-          totalAmount,
-          currency,
-          addresses,
-          cartId,
-          stripePublishableKey: process.env.STRIPE_PUBLISHABLE_KEY || ''
-        });
+        return renderCheckout(addresses);
       });
     } else {
-
-      res.redirect(`/auth/login?loginMsg=true&redirect_uri=${req.originalUrl}`);
-
+      return renderCheckout([]);
     }
   });
 });

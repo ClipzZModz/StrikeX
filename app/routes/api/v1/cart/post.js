@@ -134,6 +134,105 @@ router.post('/add', (req, res) => {
   });
 });
 
+// Cart summary for header dropdown
+router.get('/summary', (req, res) => {
+  const userId = req.session.user?.id || null;
+  const sessionId = req.session.sessionID || null;
+
+  if (!userId && !sessionId) {
+    return res.json({ items: [], subtotal: 0, count: 0, currency: 'GBP' });
+  }
+
+  const lookupQuery = 'SELECT id, cart_items FROM carts WHERE user_id = ? OR session_id = ? LIMIT 1';
+  db.secureQuery(lookupQuery, [userId, sessionId], async (cartResult, cartErr) => {
+    if (cartErr) {
+      console.error('Error fetching cart summary:', cartErr);
+      return res.status(500).json({ error: 'Failed to fetch cart' });
+    }
+
+    if (!cartResult.length) {
+      return res.json({ items: [], subtotal: 0, count: 0, currency: 'GBP', cartId: null });
+    }
+
+    let cartItems = [];
+    try {
+      cartItems = JSON.parse(cartResult[0].cart_items || '[]');
+    } catch (err) {
+      console.error('Invalid cart_items JSON:', err);
+      return res.json({ items: [], subtotal: 0, count: 0, currency: 'GBP', cartId: cartResult[0]?.id || null });
+    }
+
+    if (!Array.isArray(cartItems) || cartItems.length === 0) {
+      return res.json({ items: [], subtotal: 0, count: 0, currency: 'GBP', cartId: cartResult[0]?.id || null });
+    }
+
+    const productIds = cartItems.map(item => item.merchandiseId).filter(Boolean);
+    const productMap = new Map();
+
+    if (productIds.length) {
+      db.secureQuery('SELECT id, name, description, category, uk_price_obj, images FROM products WHERE id IN (?)', [productIds], (productRows) => {
+        productRows.forEach((product) => {
+          let price = 0;
+          let currency = 'GBP';
+          try {
+            const priceObj = JSON.parse(product.uk_price_obj || '{}');
+            price = parseFloat(priceObj?.price?.amount ?? priceObj?.amount ?? 0);
+            currency = priceObj?.price?.currencyCode || priceObj?.currencyCode || 'GBP';
+          } catch (err) {
+            price = 0;
+          }
+
+          let image = null;
+          try {
+            const images = JSON.parse(product.images || '[]');
+            image = images?.[0]?.url || null;
+          } catch (err) {
+            image = null;
+          }
+
+          productMap.set(product.id.toString(), {
+            title: product.name,
+            description: product.description,
+            category: product.category,
+            price,
+            currency,
+            image
+          });
+        });
+
+        let subtotal = 0;
+        let count = 0;
+        let currency = 'GBP';
+
+        const items = cartItems.map((item) => {
+          const product = productMap.get(item.merchandiseId?.toString()) || {};
+          const price = parseFloat(product.price ?? item.price ?? 0) || 0;
+          const qty = parseInt(item.quantity, 10) || 1;
+          const itemCurrency = product.currency || item.currency || 'GBP';
+          currency = itemCurrency;
+          count += qty;
+          subtotal += price * qty;
+
+          return {
+            id: item.merchandiseId,
+            title: item.title || item.name || product.title || 'Unnamed Product',
+            description: product.description || item.description || '',
+            category: product.category || item.category || '',
+            price,
+            quantity: qty,
+            currency: itemCurrency,
+            image: item.image || product.image || ''
+          };
+        });
+
+        return res.json({ items, subtotal, count, currency, cartId: cartResult[0]?.id || null });
+      });
+    } else {
+      return res.json({ items: [], subtotal: 0, count: 0, currency: 'GBP', cartId: cartResult[0]?.id || null });
+    }
+  });
+});
+
 
 // View cart contents
 router.get('/view', (req, res) => {
@@ -177,20 +276,20 @@ router.get('/view', (req, res) => {
 // Remove an item from the cart
 router.post('/remove', (req, res) => {
   const { productId } = req.body;
-  const cartId = req.session.user?.cartId;
+  const userId = req.session.user?.id || null;
+  const sessionId = req.session.sessionID || null;
 
   if (!productId || productId.trim() === '') {
     return res.status(400).json({ error: 'Invalid product ID' });
   }
-  if (!cartId) {
-    return res.status(400).json({ error: 'No active cart found' });
-  }
 
-  db.secureQuery('SELECT cart_items FROM carts WHERE id = ?', [cartId], (result, error) => {
+  const lookupQuery = 'SELECT id, cart_items FROM carts WHERE user_id = ? OR session_id = ? LIMIT 1';
+  db.secureQuery(lookupQuery, [userId, sessionId], (result, error) => {
     if (error || result.length === 0) {
       return res.status(404).json({ error: 'Cart not found' });
     }
 
+    const cartId = result[0].id;
     let cartItems = JSON.parse(result[0].cart_items || '[]');
     const itemIndex = cartItems.findIndex(item => item.merchandiseId === productId);
 

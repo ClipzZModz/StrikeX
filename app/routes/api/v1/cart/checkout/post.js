@@ -1,6 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const Stripe = require("stripe");
+const bcrypt = require("bcrypt");
+const crypto = require("crypto");
+const moment = require("moment");
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -17,10 +20,27 @@ function secureQuery(query, params) {
   });
 }
 
-async function loadCartWithTotals(cartId, userId) {
+async function fetchCoupon(code) {
+  if (!code) return null;
+  const normalized = String(code).trim().toUpperCase();
+  if (!normalized) return null;
+  const rows = await secureQuery(
+    `
+      SELECT id, code, percent_off, min_subtotal, active, starts_at, ends_at, usage_limit, times_used
+      FROM coupons
+      WHERE UPPER(code) = ?
+      LIMIT 1
+    `,
+    [normalized]
+  );
+  if (!rows.length) return null;
+  return rows[0];
+}
+
+async function loadCartWithTotals(cartId, userId, sessionId) {
   const cartRows = await secureQuery(
-    "SELECT * FROM carts WHERE id = ? AND user_id = ?",
-    [cartId, userId]
+    "SELECT * FROM carts WHERE id = ? AND (user_id = ? OR session_id = ?)",
+    [cartId, userId, sessionId]
   );
 
   if (!cartRows.length) {
@@ -102,27 +122,137 @@ async function loadCartWithTotals(cartId, userId) {
 }
 
 router.post("/create-payment-intent", async (req, res) => {
-  const { cartId, address, notes } = req.body || {};
-  const userId = req.session?.user?.id;
+  const { cartId, address, notes, email } = req.body || {};
+  let userId = req.session?.user?.id;
 
-  if (!userId || !cartId || !address) {
+  if (!cartId || !address) {
     return res.status(400).json({ error: "Missing required fields" });
   }
 
   const { full_name, address_line1, city, postal_code } = address;
-  if (!full_name || !address_line1 || !city || !postal_code) {
+  if (!full_name || !address_line1 || !city || !postal_code || !email) {
     return res.status(400).json({ error: "Missing address fields" });
   }
 
   try {
+    // Auto-create or reuse account for guest checkout
+    if (!userId) {
+      const normalizedEmail = String(email || "").trim().toLowerCase();
+      if (!normalizedEmail) {
+        return res.status(400).json({ error: "Missing email address" });
+      }
+
+      const existingUsers = await secureQuery(
+        "SELECT * FROM users WHERE email = ? LIMIT 1",
+        [normalizedEmail]
+      );
+
+      let user = existingUsers[0];
+      if (user) {
+        return res.status(409).json({
+          error: "Account exists. Please login to continue.",
+          code: "ACCOUNT_EXISTS_LOGIN_REQUIRED"
+        });
+      }
+
+      if (!user) {
+        const tempPassword = crypto.randomBytes(12).toString("base64");
+        const hashed = await bcrypt.hash(tempPassword, 10);
+        const nameParts = String(full_name || "").trim().split(" ");
+        const firstName = nameParts.shift() || "";
+        const lastName = nameParts.join(" ") || "";
+        const createdAt = moment().format();
+
+        const insertUser = await secureQuery(
+          `
+            INSERT INTO users (email, password, first_name, last_name, company, ip_address, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+          `,
+          [normalizedEmail, hashed, firstName, lastName, null, req.ip, createdAt]
+        );
+
+        const userRows = await secureQuery("SELECT * FROM users WHERE id = ?", [
+          insertUser.insertId
+        ]);
+        user = userRows[0];
+      }
+
+      userId = user.id;
+      req.session.user = {
+        id: user.id,
+        email: user.email,
+        firstName: user.first_name,
+        lastName: user.last_name,
+        company: user.company
+      };
+      req.session.save();
+
+      // Assign the cart to the newly created or existing user
+      await secureQuery("UPDATE carts SET user_id = ? WHERE id = ?", [
+        userId,
+        cartId
+      ]);
+
+      // Store delivery address
+      await secureQuery(
+        `
+          INSERT INTO addresses (user_id, full_name, address_line1, address_line2, city, region, postal_code, country, is_default)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `,
+        [
+          userId,
+          full_name,
+          address_line1,
+          null,
+          city,
+          null,
+          postal_code,
+          "United Kingdom",
+          true
+        ]
+      );
+    }
+
     const { updatedItems, totalAmount, currency } = await loadCartWithTotals(
       cartId,
-      userId
+      userId,
+      req.session?.sessionID
     );
 
     if (!totalAmount || totalAmount <= 0) {
       return res.status(400).json({ error: "Total amount is invalid" });
     }
+
+    const subtotalAmount = parseFloat(totalAmount.toFixed(2));
+    let discountAmount = 0;
+    let couponCode = null;
+
+    if (req.session?.couponCode) {
+      const coupon = await fetchCoupon(req.session.couponCode);
+      const now = new Date();
+      const minSubtotal = parseFloat(coupon?.min_subtotal || 0);
+      const isValid =
+        coupon &&
+        coupon.active &&
+        subtotalAmount >= minSubtotal &&
+        (!coupon.starts_at || new Date(coupon.starts_at) <= now) &&
+        (!coupon.ends_at || new Date(coupon.ends_at) >= now) &&
+        (coupon.usage_limit === null || coupon.times_used < coupon.usage_limit);
+
+      if (isValid) {
+        couponCode = coupon.code;
+        discountAmount = parseFloat(
+          (subtotalAmount * (coupon.percent_off / 100)).toFixed(2)
+        );
+      } else {
+        req.session.couponCode = null;
+      }
+    }
+
+    const shippingAmount = 0;
+    const totalWithDiscount = parseFloat(
+      (subtotalAmount - discountAmount + shippingAmount).toFixed(2)
+    );
 
     const users = await secureQuery("SELECT * FROM users WHERE id = ?", [
       userId
@@ -150,23 +280,27 @@ router.post("/create-payment-intent", async (req, res) => {
     const orderResult = await secureQuery(
       `
         INSERT INTO orders (
-          user_id, cart_id, order_items, total_amount, currency,
+          user_id, cart_id, order_items, subtotal_amount, discount_amount, shipping_amount, total_amount, currency, coupon_code,
           status, payment_status, payment_method, shipping_address, customer_notes
-        ) VALUES (?, ?, ?, ?, ?, 'pending', 'unpaid', 'stripe', ?, ?)
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', 'unpaid', 'stripe', ?, ?)
       `,
       [
         userId,
         cartId,
         JSON.stringify(updatedItems),
-        totalAmount.toFixed(2),
+        subtotalAmount.toFixed(2),
+        discountAmount.toFixed(2),
+        shippingAmount.toFixed(2),
+        totalWithDiscount.toFixed(2),
         currency,
+        couponCode,
         JSON.stringify(address),
         notes || ""
       ]
     );
 
     const orderId = orderResult.insertId;
-    const amountInPence = Math.round(totalAmount * 100);
+    const amountInPence = Math.round(totalWithDiscount * 100);
 
     const paymentIntent = await stripe.paymentIntents.create({
       amount: amountInPence,
@@ -182,7 +316,7 @@ router.post("/create-payment-intent", async (req, res) => {
     return res.json({
       clientSecret: paymentIntent.client_secret,
       orderId,
-      amount: totalAmount,
+      amount: totalWithDiscount,
       currency
     });
   } catch (err) {
@@ -211,6 +345,19 @@ router.post("/complete", async (req, res) => {
       `,
       [paymentIntentId, orderId, userId]
     );
+
+    // Increment coupon usage if applied
+    const orderRows = await secureQuery(
+      "SELECT coupon_code FROM orders WHERE id = ? AND user_id = ? LIMIT 1",
+      [orderId, userId]
+    );
+    const couponCode = orderRows?.[0]?.coupon_code;
+    if (couponCode) {
+      await secureQuery(
+        "UPDATE coupons SET times_used = times_used + 1 WHERE UPPER(code) = ?",
+        [String(couponCode).toUpperCase()]
+      );
+    }
 
     await secureQuery("DELETE FROM carts WHERE id = ? AND user_id = ?", [
       cartId,

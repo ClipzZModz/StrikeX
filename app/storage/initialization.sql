@@ -66,8 +66,12 @@ CREATE TABLE IF NOT EXISTS `orders` (
     `user_id` INT,
     `cart_id` INT,
     `order_items` LONGTEXT NOT NULL,
+    `subtotal_amount` DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
+    `discount_amount` DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
+    `shipping_amount` DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
     `total_amount` DECIMAL(10, 2) NOT NULL,
     `currency` VARCHAR(3) NOT NULL DEFAULT 'GBP',
+    `coupon_code` VARCHAR(64) NULL DEFAULT NULL,
     `status` VARCHAR(50) NOT NULL DEFAULT 'pending',
     `payment_method` VARCHAR(50),
     `payment_status` VARCHAR(50) NOT NULL DEFAULT 'unpaid',
@@ -100,4 +104,19 @@ CREATE TABLE IF NOT EXISTS `addresses` (
     `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
     FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS `coupons` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `code` VARCHAR(64) NOT NULL,
+    `percent_off` INT NOT NULL,
+    `min_subtotal` DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
+    `active` BOOLEAN NOT NULL DEFAULT TRUE,
+    `starts_at` DATETIME NULL DEFAULT NULL,
+    `ends_at` DATETIME NULL DEFAULT NULL,
+    `usage_limit` INT NULL DEFAULT NULL,
+    `times_used` INT NOT NULL DEFAULT 0,
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uniq_coupon_code` (`code`)
 );

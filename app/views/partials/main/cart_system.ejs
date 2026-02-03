@@ -80,6 +80,23 @@
                 cartItemsContainer.innerHTML = '';
                 let total = 0;
 
+                if (!cart || cart.length === 0) {
+                    cartItemsContainer.innerHTML = '<p class="cart-empty">Your cart is empty.</p>';
+                    if (cartTotalHeader) {
+                      cartTotalHeader.textContent = `\u00a30.00`;
+                    }
+                    if (cartTotalSidebar) {
+                      cartTotalSidebar.textContent = `\u00a30.00`;
+                    }
+                    cartTotalEls.forEach((el) => {
+                      el.textContent = `\u00a30.00`;
+                    });
+                    cartCountEls.forEach((el) => {
+                      el.innerHTML = '0';
+                    });
+                    return;
+                }
+
                 for (const { name, price, img, qty } of cart) {
                     let finalPrice = price;
                     let finalQty = qty;
@@ -180,6 +197,7 @@
             if (response.ok) {
               console.log('Cart updated:', result);
               addItemToCart(result.cart);
+              if (window.refreshHeaderCart) window.refreshHeaderCart();
             } else {
               console.error('Failed to add item to cart:', result.error);
               alert(`Error: ${result.error}`);

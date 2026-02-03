@@ -70,8 +70,8 @@ router.get('/', middleware.verifySession, async function(req, res) {
           });
 
           // If no items, render immediately
-          if (cartItems.length === 0) {
-             return res.render('account', {
+          const renderAccount = (addresses = []) => {
+            return res.render('account', {
               req,
               moment,
               site_key: process.env.RECAPTCHA_site,
@@ -81,8 +81,18 @@ router.get('/', middleware.verifySession, async function(req, res) {
               recommendedProducts: [],
               user: req.session.user,
               recommendedProducts,
-              cartItems
+              cartItems,
+              addresses
             });
+          };
+
+          if (cartItems.length === 0) {
+            db.secureQuery(
+              'SELECT * FROM addresses WHERE user_id = ? ORDER BY is_default DESC, created_at DESC',
+              [req.session.user.id],
+              (addresses) => renderAccount(addresses || [])
+            );
+            return;
           }
 
           // Get prices for each cart item using their merchandiseId
@@ -107,19 +117,11 @@ router.get('/', middleware.verifySession, async function(req, res) {
 
           console.log(cartItems)
 
-            // Render the account page with the fetched data
-            res.render('account', {
-              req,
-              moment,
-              site_key: process.env.RECAPTCHA_site,
-              title: 'StrikeX Customer Account',
-              orders,
-              wishlist,
-              recommendedProducts: [],
-              user: req.session.user,
-              recommendedProducts,
-              cartItems
-            });
+          db.secureQuery(
+            'SELECT * FROM addresses WHERE user_id = ? ORDER BY is_default DESC, created_at DESC',
+            [req.session.user.id],
+            (addresses) => renderAccount(addresses || [])
+          );
         });
 
 
@@ -138,43 +140,9 @@ router.get('/', middleware.verifySession, async function(req, res) {
 
 // GET Orders 
 router.get('/order/:orderId', middleware.verifySession, async function(req, res) {
-  
-
-  
-  let orderId = req.params.orderId;
-
-  if(!orderId) return res.status(400).json({status: 'error', code: '400'});
-
-  try {
-    // Query the orders table for the logged-in user's orders
-    await db.secureQuery(
-      `
-      SELECT *
-      FROM orders
-      WHERE user_id = ?
-      AND id = ?
-      `,
-      [req.session.user.id, orderId] 
-    ,function(order) {
-
-
-      console.log(order)
-
-      // Render the order page with the fetched data
-      res.render('view_order', {
-        req,
-        moment,
-        site_key: process.env.RECAPTCHA_site,
-        title: `Viewing order #${order[0].id}`,
-        order
-      });
-
-    });
-
-  } catch (error) {
-    console.error('Error fetching orders from database:', error.message);
-  } 
-
+  const orderId = req.params.orderId;
+  if (!orderId) return res.status(400).json({ status: 'error', code: '400' });
+  return res.redirect(`/order/${orderId}`);
 });
 
 
