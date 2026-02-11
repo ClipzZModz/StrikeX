@@ -82,13 +82,15 @@ class auth {
                         email: user.email,
                         firstName: user.first_name,
                         lastName: user.last_name,
-                        company: user.company
+                        company: user.company,
+                        auth: user.auth
                       };
 
                       req.session.save();
 
-                      if(req.body.redirect_uri) return res.redirect(`${req.body.redirect_uri}`);
-                      else res.redirect('/account?login=true');
+                      if (user.auth === "admin") return res.redirect("/staff/admin");
+                      if (req.body.redirect_uri) return res.redirect(`${req.body.redirect_uri}`);
+                      else res.redirect("/account?login=true");
                     }
                   );
                 } else {
@@ -98,13 +100,15 @@ class auth {
                     email: user.email,
                     firstName: user.first_name,
                     lastName: user.last_name,
-                    company: user.company
+                    company: user.company,
+                    auth: user.auth
                   };
               
                   req.session.save();
 
-                  if(req.body.redirect_uri) return res.redirect(`${req.body.redirect_uri}`);
-                  else res.redirect('/account?login=true');
+                  if (user.auth === "admin") return res.redirect("/staff/admin");
+                  if (req.body.redirect_uri) return res.redirect(`${req.body.redirect_uri}`);
+                  else res.redirect("/account?login=true");
                 }
               });
 

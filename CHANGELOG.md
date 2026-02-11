@@ -4,9 +4,22 @@ All notable changes to this project will be documented in this file.
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
 ## [Unreleased]
+
+#
+## [1.0.1-pre] - 2026-01-22
+### Added
+- Simple Node.js + Express + EJS layout with MySQL storage files.
+- Theme assets wired into `app/public` and homepage aligned to the StrikeX mission.
+- Legacy EJS views and assets brought forward from `old_strikex`.
+- Legacy routes, middleware, and cart sidebar wiring restored for working cart views.
+- Stripe Payment Intents flow with Elements UI and webhook handler.
+- Checkout guards for empty carts before rendering or creating payments.
+
 ### Changed
+- Scoped the project to a single Express app using EJS views and the legacy DB schema.
+- Removed Braintree references and prepared Stripe env keys and schema field.
 - Added hover cursor to the header cart button.
-- Changed theme over to new fresh theme
+- Changed theme over to new fresh theme.
 - Rebuilt `index-02.ejs` with a StrikeX-focused layout and updated copy.
 - Removed the legacy home-3 layout and route.
 - Wired the `index-02.ejs` "Top Picks for Local Waters" list to live products.
@@ -34,16 +47,3 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 - Added sidebar empty-state spacing and live cart count/sidebar updates after add-to-cart.
 - Rebuilt customer account page with orders list and address management.
 - Normalized account page layout using a flex sidebar/content split and aligned table typography to theme fonts.
-
-## [1.0.1-pre] - 2026-01-22
-### Added
-- Simple Node.js + Express + EJS layout with MySQL storage files.
-- Theme assets wired into `app/public` and homepage aligned to the StrikeX mission.
-- Legacy EJS views and assets brought forward from `old_strikex`.
-- Legacy routes, middleware, and cart sidebar wiring restored for working cart views.
-- Stripe Payment Intents flow with Elements UI and webhook handler.
-- Checkout guards for empty carts before rendering or creating payments.
-
-### Changed
-- Scoped the project to a single Express app using EJS views and the legacy DB schema.
-- Removed Braintree references and prepared Stripe env keys and schema field.

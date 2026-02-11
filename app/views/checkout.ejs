@@ -1269,7 +1269,7 @@
           throw new Error(completeJson.error || 'Unable to finalize order.');
         }
 
-        window.location.href = `/order/${result.orderId}`;
+        window.location.href = `/order/${result.orderId}?confirm=1`;
       } catch (err) {
         errorEl.textContent = err.message || 'Payment failed.';
         if (checkoutErrors && !checkoutErrors.textContent) {

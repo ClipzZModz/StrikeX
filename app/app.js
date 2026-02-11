@@ -104,6 +104,7 @@ const index_view = require("./routes/views/index");
 const account_view = require("./routes/views/account");
 const checkout_view = require("./routes/api/v1/cart/checkout/get");
 const checkout_view_post = require("./routes/api/v1/cart/checkout/post");
+const staff_view = require("./routes/views/staff");
 
 const api_index = require("./routes/api/v1/index");
 const login_get_api = require("./routes/api/v1/login/get");
@@ -120,6 +121,7 @@ app.use("/", index_view);
 app.use("/account", account_view);
 app.use("/checkout", checkout_view);
 app.use("/checkout", checkout_view_post);
+app.use("/staff", staff_view);
 
 app.use("/api/v1", api_index);
 app.use("/auth/login", login_get_api);

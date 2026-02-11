@@ -419,6 +419,9 @@ router.get('/order/:orderId', middleware.verifySession, (req, res) => {
     return res.status(400).send('Missing order id');
   }
 
+  const confirmParam = String(req.query?.confirm || '').toLowerCase();
+  const wantsConfirmation = confirmParam === '1' || confirmParam === 'true';
+
   db.secureQuery(
     `
       SELECT *
@@ -455,13 +458,38 @@ router.get('/order/:orderId', middleware.verifySession, (req, res) => {
         console.error('Error parsing shipping address:', parseError);
       }
 
-      res.render('view_order', {
+      const confirmationSeen = Number(order.confirmation_seen || 0) === 1;
+      const showConfirmation = wantsConfirmation && !confirmationSeen;
+
+      const renderOrder = () => res.render('view_order', {
         req,
         title: `Order #${order.id}`,
         order,
         orderItems,
-        shippingAddress
+        shippingAddress,
+        showConfirmation
       });
+
+      if (!showConfirmation) {
+        return renderOrder();
+      }
+
+      db.secureQuery(
+        `
+          UPDATE orders
+          SET confirmation_seen = 1
+          WHERE id = ? AND user_id = ?
+        `,
+        [order.id, req.session.user.id],
+        (updateResult, updateErr) => {
+          if (updateErr) {
+            console.error('Error updating confirmation_seen:', updateErr);
+          } else {
+            order.confirmation_seen = 1;
+          }
+          return renderOrder();
+        }
+      );
     }
   );
 });

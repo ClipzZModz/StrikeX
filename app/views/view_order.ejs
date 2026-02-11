@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="/css/style.min.css">
   <!-- favicon -->
   <link rel="icon" href="/favicon.ico">
-  <title>The Trickster | Confirmation</title>
+  <title>The Trickster | <%= showConfirmation ? 'Confirmation' : 'Order Details' %></title>
 </head>
 <body>
 
@@ -189,7 +189,7 @@
             <p>03.</p>
           </div>
           <!-- /STEP NUMBER -->
-          <h6 class="title tiny">Confirmation</h6>
+          <h6 class="title tiny"><%= showConfirmation ? 'Confirmation' : 'Order Details' %></h6>
         </div>
         <!-- STEPS HEADER ITEM -->
       </div>
@@ -209,15 +209,22 @@
               </svg>
               <!-- /SVG CART -->
 
-              <!-- SVG CHECK BIG -->
-              <svg class="svg-check-big">
-                <use xlink:href="#svg-check-big"></use>
-              </svg>
-              <!-- /SVG CHECK BIG -->
+              <% if (showConfirmation) { %>
+                <!-- SVG CHECK BIG -->
+                <svg class="svg-check-big">
+                  <use xlink:href="#svg-check-big"></use>
+                </svg>
+                <!-- /SVG CHECK BIG -->
+              <% } %>
             </div>
             <!-- /SECTION DECORATION -->
-            <h3 class="title medium">Order Successfully Received</h3>
-            <h5 class="title small">Thanks for your purchase!</h5>
+            <% if (showConfirmation) { %>
+              <h3 class="title medium">Order Successfully Received</h3>
+              <h5 class="title small">Thanks for your purchase!</h5>
+            <% } else { %>
+              <h3 class="title medium">Order Details</h3>
+              <h5 class="title small">Track your order status and delivery estimate.</h5>
+            <% } %>
           </div>
           <!-- /SECTION MESSAGE -->
         </div>
@@ -229,7 +236,47 @@
             const currency = order?.currency || 'GBP';
             const currencySymbol = currency === 'GBP' ? '£' : `${currency} `;
             const formatMoney = (value) => `${currencySymbol}${parseFloat(value || 0).toFixed(2)} ${currency}`;
-            const statusLabel = order?.payment_status === 'paid' ? 'Paid' : 'Pending';
+            const paymentLabel = order?.payment_status === 'paid' ? 'Paid' : 'Pending';
+            const rawStatus = String(order?.status || 'pending');
+            const orderStatus = rawStatus.charAt(0).toUpperCase() + rawStatus.slice(1);
+            const createdAt = order?.created_at ? new Date(order.created_at) : null;
+            const updatedAt = order?.updated_at ? new Date(order.updated_at) : null;
+            const processingAt = order?.processing_at ? new Date(order.processing_at) : null;
+            const shippedAt = order?.shipped_at ? new Date(order.shipped_at) : null;
+            const deliveredAt = order?.delivered_at ? new Date(order.delivered_at) : null;
+            const formatDate = (value) => value ? value.toLocaleDateString('en-GB', { year: 'numeric', month: 'short', day: 'numeric' }) : 'â€”';
+            const addDays = (value, days) => {
+              if (!value) return null;
+              const copy = new Date(value);
+              copy.setDate(copy.getDate() + days);
+              return copy;
+            };
+            const addBusinessDays = (value, businessDays) => {
+              if (!value) return null;
+              const copy = new Date(value);
+              let added = 0;
+              while (added < businessDays) {
+                copy.setDate(copy.getDate() + 1);
+                const day = copy.getDay();
+                if (day !== 0 && day !== 6) {
+                  added += 1;
+                }
+              }
+              return copy;
+            };
+            const etaStart = order?.shipping_eta_start ? new Date(order.shipping_eta_start) : addBusinessDays(createdAt, 2);
+            const etaEnd = order?.shipping_eta_end ? new Date(order.shipping_eta_end) : addBusinessDays(createdAt, 4);
+            const etaLabel = createdAt ? `${formatDate(etaStart)} - ${formatDate(etaEnd)}` : 'â€”';
+            const timelineSteps = [
+              { key: 'pending', label: 'Order placed', date: createdAt },
+              { key: 'processing', label: 'Processing', date: processingAt },
+              { key: 'shipped', label: 'Shipped', date: shippedAt },
+              { key: 'in_transit', label: 'In transit', date: shippedAt },
+              { key: 'out_for_delivery', label: 'Out for delivery', date: etaEnd },
+              { key: 'delivered', label: 'Delivered', date: deliveredAt }
+            ];
+            const statusIndex = timelineSteps.findIndex(step => step.key === rawStatus);
+            const activeIndex = statusIndex === -1 ? 0 : statusIndex;
           %>
           <h2 class="subsection-title">Order Details (ID: <span class="bold"><%= order.id %></span>)</h2>
           <hr class="line-separator">
@@ -287,8 +334,38 @@
 
             <!-- DETAILS LIST ITEM -->
             <div class="details-list-item">
+              <h6 class="details-list-title">Order Status</h6>
+              <p class="details-list-info"><span>Status:</span> <%= orderStatus %></p>
+              <p class="details-list-info"><span>Payment:</span> <%= paymentLabel %></p>
+              <p class="details-list-info"><span>Placed:</span> <%= formatDate(createdAt) %></p>
+              <p class="details-list-info"><span>Last Update:</span> <%= formatDate(updatedAt) %></p>
+              <p class="details-list-info"><span>Estimated Arrival:</span> <%= etaLabel %></p>
+              <p class="details-list-info"><span>Carrier:</span> <%= order.shipping_carrier || 'â€”' %></p>
+              <p class="details-list-info"><span>Tracking #:</span> <%= order.tracking_number || 'â€”' %></p>
+              <% if (order.tracking_url) { %>
+                <p class="details-list-info"><span>Tracking Link:</span> <a class="link" href="<%= order.tracking_url %>" target="_blank" rel="noopener noreferrer">View tracking</a></p>
+              <% } %>
+            </div>
+            <!-- /DETAILS LIST ITEM -->
+
+            <!-- DETAILS LIST ITEM -->
+            <div class="details-list-item">
+              <h6 class="details-list-title">Delivery Timeline</h6>
+              <% timelineSteps.forEach((step, index) => { %>
+                <p class="details-list-info">
+                  <span class="push"><%= index <= activeIndex ? '✓' : '•' %> <%= step.label %></span>
+                  <% if (step.date) { %>
+                    <%= formatDate(step.date) %>
+                  <% } %>
+                </p>
+              <% }) %>
+            </div>
+            <!-- /DETAILS LIST ITEM -->
+
+            <!-- DETAILS LIST ITEM -->
+            <div class="details-list-item">
               <h6 class="details-list-title">Payment</h6>
-              <p class="details-list-info"><span>Status:</span> <%= statusLabel %></p>
+              <p class="details-list-info"><span>Status:</span> <%= paymentLabel %></p>
               <p class="details-list-info"><span>Method:</span> <%= (order.payment_method || 'stripe').toUpperCase() %></p>
               <% if (order.payment_id) { %>
                 <p class="details-list-info"><span>Transaction:</span> <%= order.payment_id %></p>
